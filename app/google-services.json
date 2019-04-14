@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "232494421068-0c89ud7de275kvb7737b5ka95c6ls195.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pikoproject",
+            "certificate_hash": "8770ac11f15f3f781e3d0faac78119f1d4ef1691"
+          }
+        },
+        {
           "client_id": "232494421068-i1ag8dnhoh2fjh7oq561s9q705rfrga5.apps.googleusercontent.com",
           "client_type": 3
         }
