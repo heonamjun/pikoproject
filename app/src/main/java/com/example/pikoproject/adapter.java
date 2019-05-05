@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
 
-    private ArrayList<item> mDataset;
+    private ArrayList<item> mDataset;  //adapter에 들어갈 list 선언.ㅎㅈ
 
     public static class VIewHolder extends RecyclerView.ViewHolder{
 
@@ -36,7 +36,8 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
 
     @Override
     public adapter.VIewHolder onCreateViewHolder(ViewGroup parent, int viewType){ // 화면생성
-
+        //context 와 viewgroup 생성자로 전달 받아 layoutinflater.from을 토행 view를 생성
+        //layoutinflater를 이용하여 전 단계에서 만들었던 cardview.xml를 inflate 시킴 . 혁준
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview, parent , false);
         VIewHolder viewholder = new VIewHolder(view);
         return viewholder;
@@ -44,11 +45,10 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
 
 
     @Override
-    public void onBindViewHolder(VIewHolder holder , int position){ // 생성한거를 가지고 리사이클에다가 위치번호 나열
-
-        Glide.with(holder.mimageview.getContext()).load(mDataset.get(position).getPicUrl()).into(holder.mimageview); // 글라이드 라이브러리 사용해서 이미지뷰 부르기
-
-        holder.mtextview.setText(mDataset.get(position).gps);
+    public void onBindViewHolder(VIewHolder holder , int position){
+        //position에서 데이터 요소 가져오기.혁준
+        //cardview 하나하나 보여주는 함수.혁준
+        Glide.with(holder.mimageview.getContext()).load(mDataset.get(position).getPicUrl()).into(holder.mimageview); // 글라이드 라이브러리 사용해서 이미지뷰 부르기.남준준        holder.mtextview.setText(mDataset.get(position).gps);
         holder.ttextview.setText(mDataset.get(position).title);
     }
 
