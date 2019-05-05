@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
@@ -23,8 +25,8 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
         public VIewHolder(View view) {
             super(view);
             mimageview = (ImageView) view.findViewById(R.id.drama_image);
-            mtextview = (TextView) view.findViewById(R.id.drama_title);
-            ttextview = (TextView) view.findViewById(R.id.drama_text);
+            mtextview = (TextView) view.findViewById(R.id.drama_gps);
+            ttextview = (TextView) view.findViewById(R.id.drama_title);
         }
     }
 
@@ -43,9 +45,11 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
 
     @Override
     public void onBindViewHolder(VIewHolder holder , int position){ // 생성한거를 가지고 리사이클에다가 위치번호 나열
-        holder.mimageview.setImageResource(mDataset.get(position).img);
-        holder.mtextview.setText(mDataset.get(position).text);
-        holder.ttextview.setText(mDataset.get(position).text2);
+
+        Glide.with(holder.mimageview.getContext()).load(mDataset.get(position).getPicUrl()).into(holder.mimageview); // 글라이드 라이브러리 사용해서 이미지뷰 부르기
+
+        holder.mtextview.setText(mDataset.get(position).gps);
+        holder.ttextview.setText(mDataset.get(position).title);
     }
 
     @Override

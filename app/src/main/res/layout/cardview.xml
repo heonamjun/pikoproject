@@ -30,19 +30,21 @@
                 android:layout_height="200dp"
                 app:srcCompat="@color/colorAccent" />
 
+
+
             <TextView
                 android:id="@+id/drama_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="title"
+                android:text="text"
                 android:textStyle="bold"
                 android:textSize="30dp"/>
 
             <TextView
-                android:id="@+id/drama_text"
+                android:id="@+id/drama_gps"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="text"
+                android:text="title"
                 android:textStyle="bold"
                 android:textSize="15dp"/>
 

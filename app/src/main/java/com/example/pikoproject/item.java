@@ -1,39 +1,45 @@
 package com.example.pikoproject;
 
-public class item {
-    public String text;
-    public String text2;
-    public int img;
+import java.io.Serializable;
 
-    public item(String text, String text2, int img) {
-        this.text = text;
-        this.text2 = text2;
-        this.img = img;
+public class item implements Serializable {
+    public String gps;
+    public String title;
+    //public int img;
+
+    public String picUrl;
+    public item() { //파이어에베이스와 연동하려면 매개변수없는걸로 필요?.ㄵ
+
     }
 
-    public String getText() {
-        return text;
+
+    public item(String gps, String title, String picUrl/*,int img*/) {
+        this.gps = gps;
+        this.title = title;
+        this.picUrl = picUrl;
+
+    }
+    public String getGps() {
+        return gps;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setGps(String gps) {
+        this.gps = gps;
     }
 
-    public String getText2() {
-        return text2;
+    public String getTitle() {
+        return title;
     }
 
-    public void setText2(String text2) {
-        this.text2 = text2;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
     }
 }
-
-   /* public int getImg() {
-        return img;
-    }
-
-    public void setImg(int img) {
-        this.img = img;
-    }
-}
-*/
