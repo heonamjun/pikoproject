@@ -31,7 +31,6 @@
                 app:srcCompat="@color/colorAccent" />
 
 
-
             <TextView
                 android:id="@+id/drama_title"
                 android:layout_width="match_parent"

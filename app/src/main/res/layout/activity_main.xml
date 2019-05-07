@@ -10,9 +10,20 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="635dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:overScrollMode="never"
-        android:scrollbars="none"/>
+        android:scrollbars="none" />
+
+    <Button
+        android:id="@+id/gall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="갤러리" />
+
+    <SurfaceView
+        android:id="@+id/preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

@@ -1,5 +1,7 @@
 package com.example.pikoproject;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +13,11 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
+import static android.support.v4.app.ActivityCompat.startActivityForResult;
+
 public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
-
+    final int PickfromAlbum=1;
     private ArrayList<item> mDataset;  //adapter에 들어갈 list 선언.ㅎㅈ
-
     public static class VIewHolder extends RecyclerView.ViewHolder{
 
         public ImageView mimageview;
@@ -45,11 +48,13 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
 
 
     @Override
-    public void onBindViewHolder(VIewHolder holder , int position){
+    public void onBindViewHolder(VIewHolder holder , final int position){
         //position에서 데이터 요소 가져오기.혁준
         //cardview 하나하나 보여주는 함수.혁준
         Glide.with(holder.mimageview.getContext()).load(mDataset.get(position).getPicUrl()).into(holder.mimageview); // 글라이드 라이브러리 사용해서 이미지뷰 부르기.남준준        holder.mtextview.setText(mDataset.get(position).gps);
         holder.ttextview.setText(mDataset.get(position).title);
+
+
     }
 
     @Override
