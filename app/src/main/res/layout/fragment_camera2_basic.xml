@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -39,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
+            android:background="@color/colorPrimaryDark"
             android:text="플래쉬" />
     </LinearLayout>
 
@@ -55,53 +56,78 @@
             android:scaleType="centerCrop"
             app:layout_constraintTop_toBottomOf="@id/top_panel"/>
 
-        <ImageView
-            android:id="@+id/background_guide"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:alpha="0.5"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="@id/texture"
-             />
-
-        <ImageView
-            android:id="@+id/outline_guide"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-
-            app:layout_constraintBottom_toBottomOf="@id/texture"/>
-
     </FrameLayout>
 
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
         android:id="@+id/bottom_panel"
-        android:background="@android:color/transparent"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/texture"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/texture">
 
 
-        <Button
-            android:id="@+id/capture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+        <LinearLayout
+            android:id="@+id/l3"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:text="사진찍기" />
+            android:gravity="center"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/imageButton2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
+
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/l2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:text="갤러리" />
+            android:gravity="right|left"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/capture"
+                android:layout_width="121dp"
+                android:layout_height="108dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:cropToPadding="false"
+                android:gravity="bottom|center"
+                android:paddingTop="10dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/doublecircle" />
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/l1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingTop="50dp">
+
+            <ImageButton
+                android:id="@+id/imageButton2"
+                android:layout_width="61dp"
+                android:layout_height="43dp"
+                android:layout_gravity="center"
+                android:layout_weight="0"
+                android:background="@android:color/transparent"
+
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/image"
+
+                />
+        </LinearLayout>
+        </LinearLayout>
+
+
 
     </LinearLayout>
-</LinearLayout>

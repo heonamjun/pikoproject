@@ -8,7 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView.LayoutManager mlayoutmanager;
     ArrayList<item> mydataset;
     Uri photouri;
-    Button btn1;
+    ImageButton btn1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mrecyclerview = (RecyclerView) findViewById(R.id.recyclerview);
         mrecyclerview.setHasFixedSize(true); // 카드뷰 사이즈 고정
-        mlayoutmanager = new LinearLayoutManager(this);
+        //mlayoutmanager = new GridLayoutManager(this, 2);// 사이클뷰 디자인부분 2열
+        mlayoutmanager = new LinearLayoutManager(this , LinearLayout.HORIZONTAL,false); // 가로로 스크롤
         mrecyclerview.setLayoutManager(mlayoutmanager);
 
         mydataset = new ArrayList<>();
@@ -63,6 +65,14 @@ public class MainActivity extends AppCompatActivity {
         madapter = new adapter(mydataset);
         mrecyclerview.setAdapter(madapter);
 
+        btn1 = (ImageButton)findViewById(R.id.cameraselect);
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(),CameraActivity2.class);
+                startActivity(intent);
+            }
+        });
     }
 
 }
