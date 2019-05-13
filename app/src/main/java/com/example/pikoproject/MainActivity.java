@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -31,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     Uri photouri;
     ImageButton btn1;
 
-    ImageButton imageButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

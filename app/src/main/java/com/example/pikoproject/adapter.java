@@ -1,7 +1,5 @@
 package com.example.pikoproject;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +10,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
-
-import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
 public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
     final int PickfromAlbum=1;
