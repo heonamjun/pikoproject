@@ -6,11 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import com.example.pikoproject.Camera.Camera2RawFragment;
-import com.example.pikoproject.databinding.ActivityCameraBinding;
 
 
-public class CameraActivity extends AppCompatActivity {
-    private ActivityCameraBinding mBinding;
+import com.example.pikoproject.databinding.ActivityCamera2Binding;
+
+
+public class CameraActivity2 extends AppCompatActivity {
+    private ActivityCamera2Binding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +21,7 @@ public class CameraActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_camera);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_camera2);
 
         if (null == savedInstanceState) {
             initCameraPreview();

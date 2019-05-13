@@ -27,8 +27,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -70,16 +68,13 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.pikoproject.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
@@ -623,7 +618,7 @@ public class Camera2RawFragment extends Fragment
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
 
         view.findViewById(R.id.capture).setOnClickListener(this);
-        view.findViewById(R.id.imageButton).setOnClickListener(this);
+        //view.findViewById(R.id.imageButton).setOnClickListener(this);
         view.findViewById(R.id.imageButton2).setOnClickListener(this);
         view.findViewById(R.id.imageButton5).setOnClickListener(this);
         view.findViewById(R.id.imageButton4).setOnClickListener(this);
