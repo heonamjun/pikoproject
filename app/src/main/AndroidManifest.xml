@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".CameraAcitivity"
+            android:name=".CameraActivity"
             android:label="@string/title_activity_camera_acitivity"
             android:theme="@style/AppTheme.NoActionBar" />
 

@@ -30,7 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class CameraAcitivity extends AppCompatActivity {
+public class CameraActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 672;
     private String imageFilePath;
