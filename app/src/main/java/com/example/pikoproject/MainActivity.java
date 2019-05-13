@@ -5,10 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mrecyclerview = (RecyclerView) findViewById(R.id.recyclerview);
         mrecyclerview.setHasFixedSize(true); // 카드뷰 사이즈 고정
-        mlayoutmanager = new LinearLayoutManager(this);
+        //mlayoutmanager = new GridLayoutManager(this, 2);// 사이클뷰 디자인부분 2열
+        mlayoutmanager = new LinearLayoutManager(this , LinearLayout.HORIZONTAL,false); // 가로로 스크롤
         mrecyclerview.setLayoutManager(mlayoutmanager);
 
         mydataset = new ArrayList<>();
