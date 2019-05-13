@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<item> mydataset;
     Uri photouri;
     ImageButton btn1;
+
+    ImageButton imageButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         // 참조 데이터 기준으로 콜벡리스너
         madapter = new adapter(mydataset);
         mrecyclerview.setAdapter(madapter);
-
         btn1 = (ImageButton)findViewById(R.id.cameraselect);
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +76,4 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-}
-
+    }
