@@ -12,6 +12,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/Loginout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="로그아웃" />
+
         <ImageButton
             android:id="@+id/cameraselect"
             android:layout_width="match_parent"

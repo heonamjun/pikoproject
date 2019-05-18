@@ -8,9 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,12 +26,12 @@ public class MainActivity extends AppCompatActivity {
 
     final int PickfromAlbum = 1;
     private static RecyclerView mrecyclerview;
-    RecyclerView.Adapter madapter;
-    RecyclerView.LayoutManager mlayoutmanager;
-    ArrayList<item> mydataset;
-    Uri photouri;
-    ImageButton btn1;
-
+    private RecyclerView.Adapter madapter;
+    private RecyclerView.LayoutManager mlayoutmanager;
+    private ArrayList<item> mydataset;
+    private Uri photouri;
+    private ImageButton btn1;
+    private Button loginout_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,13 @@ public class MainActivity extends AppCompatActivity {
         mrecyclerview.setLayoutManager(mlayoutmanager);
 
         mydataset = new ArrayList<>();
+
+        if(FirebaseAuth.getInstance().getCurrentUser() == null){
+            Intent intent = new Intent(MainActivity.this , LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(); // 파베 객체 생성.ㄵ
         DatabaseReference databaseReference = firebaseDatabase.getReference("drama_list"); //v파베에서 참조할 데이터 .ㄵ
@@ -73,5 +82,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        loginout_btn = (Button) findViewById(R.id.Loginout);
+        loginout_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(MainActivity.this , LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
+
+
     }
