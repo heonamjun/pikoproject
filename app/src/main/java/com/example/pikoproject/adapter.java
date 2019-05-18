@@ -1,5 +1,9 @@
 package com.example.pikoproject;
 
+import android.content.Intent;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,11 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.pikoproject.Camera.Camera2RawFragment;
 
 import java.util.ArrayList;
 
 public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
-    final int PickfromAlbum=1;
     private ArrayList<item> mDataset;  //adapter에 들어갈 list 선언.ㅎㅈ
     public static class VIewHolder extends RecyclerView.ViewHolder{
 
@@ -49,6 +53,26 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
         //cardview 하나하나 보여주는 함수.혁준
         Glide.with(holder.mimageview.getContext()).load(mDataset.get(position).getPicUrl()).into(holder.mimageview); // 글라이드 라이브러리 사용해서 이미지뷰 부르기.남준준        holder.mtextview.setText(mDataset.get(position).gps);
         holder.ttextview.setText(mDataset.get(position).title);
+        holder.mimageview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Camera2RawFragment c2r = new Camera2RawFragment();
+                Messenger messenger =c2r.getMessenger();
+                Message msg = Message.obtain();
+                msg.obj = mDataset.get(position).getPicUrl(); // 사진 주소 보내기
+                try {
+                    messenger.send(msg);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+
+
+
+                Intent intent = new Intent(v.getContext(), CameraActivity2.class);
+
+                v.getContext().startActivity(intent);
+            }
+        });
 
 
     }
@@ -57,4 +81,5 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
     public int getItemCount(){
         return mDataset.size();
     }
+
 }

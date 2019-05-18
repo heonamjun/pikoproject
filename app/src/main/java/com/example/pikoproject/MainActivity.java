@@ -74,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
         // 참조 데이터 기준으로 콜벡리스너
         madapter = new adapter(mydataset);
         mrecyclerview.setAdapter(madapter);
+
+
+
         btn1 = (ImageButton)findViewById(R.id.cameraselect);
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
     }

@@ -27,6 +27,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -42,7 +44,6 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.DngCreator;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
@@ -56,6 +57,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Messenger;
 import android.os.SystemClock;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.app.ActivityCompat;
@@ -68,13 +70,16 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.pikoproject.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
@@ -90,7 +95,6 @@ import java.util.TreeMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 
 /**
  * A fragment that demonstrates use of the Camera2 API to capture RAW and JPEG photos.
@@ -131,6 +135,7 @@ public class Camera2RawFragment extends Fragment
     public static final String CAMERA_FRONT = "1";
     public static final String CAMERA_BACK = "0";
 
+   static String filterImageUrl = "";
 
 
     /**
@@ -526,52 +531,57 @@ public class Camera2RawFragment extends Fragment
         public void onCaptureStarted(CameraCaptureSession session, CaptureRequest request,
                                      long timestamp, long frameNumber) {
             String currentDateTime = generateTimestamp();
-           /* final File rawFile = new File(Environment.
-                    getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-                    "RAW_" + currentDateTime + ".dng");*/
+
             final File jpegFile = new File(Environment.
                     getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
                     "JPEG_" + currentDateTime + ".jpg");
 
-            //afterImageUrl = String.valueOf(jpegFile);
 
             // Look up the ImageSaverBuilder for this request and update it with the file name
             // based on the capture start time.
             ImageSaver.ImageSaverBuilder jpegBuilder;
-         //   ImageSaver.ImageSaverBuilder rawBuilder;
+            ImageSaver.ImageSaverBuilder rawBuilder;
             int requestId = (int) request.getTag();
             synchronized (mCameraStateLock) {
                 jpegBuilder = mJpegResultQueue.get(requestId);
-           //     rawBuilder = mRawResultQueue.get(requestId);
+                rawBuilder = mRawResultQueue.get(requestId);
             }
 
             if (jpegBuilder != null) jpegBuilder.setFile(jpegFile);
-          //  if (rawBuilder != null) rawBuilder.setFile(rawFile);
         }
 
         @Override
         public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
             int requestId = (int) request.getTag();
             final ImageSaver.ImageSaverBuilder jpegBuilder;
+            final ImageSaver.ImageSaverBuilder rawBuilder;
             StringBuilder sb = new StringBuilder();
 
             // Look up the ImageSaverBuilder for this request and update it with the CaptureResult
             synchronized (mCameraStateLock) {
                 jpegBuilder = mJpegResultQueue.get(requestId);
+                rawBuilder = mRawResultQueue.get(requestId);
 
                 if (jpegBuilder != null) {
                     jpegBuilder.setResult(result);
                     sb.append("Saving JPEG as: ");
                     sb.append(jpegBuilder.getSaveLocation());
                 }
+                if (rawBuilder != null) {
+                    rawBuilder.setResult(result);
+                    if (jpegBuilder != null) sb.append(", ");
+                    sb.append("Saving RAW as: ");
+                    sb.append(rawBuilder.getSaveLocation());
+                }
 
                 // If we have all the results necessary, save the image to a file in the background.
                 handleCompletionLocked(requestId, jpegBuilder, mJpegResultQueue);
+                handleCompletionLocked(requestId, rawBuilder, mRawResultQueue);
+
                 finishedCaptureLocked();
             }
 
             final ProgressDialog detectionProgressDialog = new ProgressDialog(getContext());
-
 
 
             showToast(sb.toString());
@@ -583,6 +593,7 @@ public class Camera2RawFragment extends Fragment
             int requestId = (int) request.getTag();
             synchronized (mCameraStateLock) {
                 mJpegResultQueue.remove(requestId);
+                mRawResultQueue.remove(requestId);
                 finishedCaptureLocked();
             }
             showToast("Capture failed!");
@@ -611,14 +622,37 @@ public class Camera2RawFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContext = container.getContext();
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
+
+
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        filterImageUrl = "";
+
+    }
+/*
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }*/
+
+    @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
+
+
+
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
 
+        ImageView filterImageView = ((Activity) mContext).findViewById(R.id.back);
+  //      ImageView filterLinedView = ((Activity) mContext).findViewById(R.id.backLine);
+
+        Glide.with(this).load(filterImageUrl).into(filterImageView);
+/*        Glide.with(this).load(filterLineUrl).into(filterLinedView);*/
+
+
         view.findViewById(R.id.capture).setOnClickListener(this);
-        //view.findViewById(R.id.imageButton).setOnClickListener(this);
         view.findViewById(R.id.imageButton2).setOnClickListener(this);
         view.findViewById(R.id.imageButton5).setOnClickListener(this);
         view.findViewById(R.id.imageButton4).setOnClickListener(this);
@@ -738,10 +772,32 @@ public class Camera2RawFragment extends Fragment
         i.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 // images on the SD card.
 
-// 결과를 리턴하는 Activity 호출 추후 구현
-        startActivityForResult(i,1);
+// 결과를 리턴하는 Activity 호출
+        startActivityForResult(i, 100);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // Check which request we're responding to
+        if (requestCode == 100) {
+            // Make sure the request was successful
+            if (resultCode == Activity.RESULT_OK) {
+                try {
+                    // 선택한 이미지에서 비트맵 생성
+                    InputStream in = getActivity().getContentResolver().openInputStream(data.getData());
+                    Bitmap img = BitmapFactory.decodeStream(in);
+                    in.close();
+                    // 이미지 표시
+                    ImageView x = getActivity().findViewById(R.id.back);
+                    x.setImageBitmap(img);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     /**
      * Sets up state related to camera that is needed before opening a {@link CameraDevice}.
@@ -1436,21 +1492,7 @@ public class Camera2RawFragment extends Fragment
                     }
                     break;
                 }
-                case ImageFormat.RAW_SENSOR: {
-                    DngCreator dngCreator = new DngCreator(mCharacteristics, mCaptureResult);
-                    FileOutputStream output = null;
-                    try {
-                        output = new FileOutputStream(mFile);
-                        dngCreator.writeImage(output, mImage);
-                        success = true;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        mImage.close();
-                        closeOutput(output);
-                    }
-                    break;
-                }
+
                 default: {
                     Log.e(TAG, "Cannot save image, unexpected image format:" + format);
                     break;
@@ -1876,7 +1918,7 @@ public class Camera2RawFragment extends Fragment
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Fragment parent = getParentFragment();
             return new AlertDialog.Builder(getActivity())
-                    .setMessage("권한이 필요합니다.")
+                    .setMessage(R.string.request_permission)
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -1895,5 +1937,17 @@ public class Camera2RawFragment extends Fragment
         }
 
     }
+
+
+
+    public Messenger getMessenger(){return messenger;}
+    private Messenger messenger = new Messenger(new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+           filterImageUrl = (String) msg.obj; // 메시지를 수신하는 목적지 핸들러에 보낼 임의의 객체
+        }
+    });
+
+
 
 }
