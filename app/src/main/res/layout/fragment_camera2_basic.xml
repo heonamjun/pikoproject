@@ -56,19 +56,23 @@
             android:scaleType="centerCrop"
             app:layout_constraintTop_toBottomOf="@id/top_panel"/>
 
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="match_parent"
+        <com.xiaopo.flying.sticker.StickerView
+            android:id="@+id/stiker"
+            android:layout_gravity="center"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:alpha="0.5"
+            android:layout_width="match_parent">
+            <ImageView
+                android:id="@+id/back"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/StringValue"
+                android:scaleType="centerCrop"
 
-            app:layout_constraintBottom_toBottomOf="@id/texture"
+                app:layout_constraintBottom_toBottomOf="@id/texture" />
+            <!--app:srcCompat="@drawable/image" -->
+        </com.xiaopo.flying.sticker.StickerView>
 
-            app:srcCompat="@drawable/image"
-            android:contentDescription="@string/StringValue"
 
-            />
 
         <ImageView
             android:id="@+id/backLine"
@@ -76,10 +80,16 @@
             android:layout_height="match_parent"
             android:scaleType="center"
             app:layout_constraintBottom_toBottomOf="@id/texture"
-            app:srcCompat="@drawable/ic_action_photo"
             android:contentDescription="@string/StringValue"
 
             />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:paddingBottom="10dp" />
 
     </FrameLayout>
 

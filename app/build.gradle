@@ -53,6 +53,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.2.1'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
+    implementation 'com.flying.xiaopo:sticker:1.6.0'
+
+
+
 
 
 }

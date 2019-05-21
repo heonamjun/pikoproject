@@ -70,11 +70,18 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.pikoproject.R;
+import com.xiaopo.flying.sticker.DrawableSticker;
+import com.xiaopo.flying.sticker.StickerView;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -136,6 +143,9 @@ public class Camera2RawFragment extends Fragment
     public static final String CAMERA_BACK = "0";
 
    static String filterImageUrl = "";
+   static String lineImageUrl="";
+   StickerView stickerView;
+   static int finalHeight, finalWidth;
 
 
     /**
@@ -363,6 +373,7 @@ public class Camera2RawFragment extends Fragment
      * taking too long.
      */
     private long mCaptureTimer;
+    private SeekBar seekBar;
 
     //**********************************************************************************************
 
@@ -621,6 +632,8 @@ public class Camera2RawFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContext = container.getContext();
+//        lineImageUrl=getArguments().getString("line");
+
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
 
 
@@ -645,11 +658,64 @@ public class Camera2RawFragment extends Fragment
 
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
 
-        ImageView filterImageView = ((Activity) mContext).findViewById(R.id.back);
-  //      ImageView filterLinedView = ((Activity) mContext).findViewById(R.id.backLine);
+        final ImageView filterImageView = ((Activity) mContext).findViewById(R.id.back);
+        ImageView filterLinedView = ((Activity) mContext).findViewById(R.id.backLine);
+        filterImageView.setImageAlpha(127); //투명도 초기값 50%
+        ViewTreeObserver vto = filterImageView.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+               filterImageView.getViewTreeObserver().removeOnPreDrawListener(this);
+               finalHeight = filterImageView.getMeasuredHeight();
+               finalWidth=filterImageView.getMeasuredWidth();
+                return true;
+            }
+        });
+
+        
+        SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
+        seekBar.setMax(255);
+        seekBar.setProgress(127);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                filterImageView.setImageAlpha(seekBar.getProgress());
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+/* 투명도조절을위해서 seekbar 위젯을 사용해서 이미지 투명도값을 조절 */
+
+
+        stickerView = ((Activity)mContext).findViewById(R.id.stiker);
+        //BitmapStickerIcon icon = new BitmapStickerIcon(ContextCompat.getDrawable(this,R.drawable.image))
+
+
+        Glide.with(this).load(lineImageUrl).listener(new RequestListener<String, GlideDrawable>() {
+            @Override
+            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                stickerView.addSticker(new DrawableSticker(resource));
+                stickerView.setConstrained(true);
+                return false;
+            }
+        }).into(finalWidth,finalHeight);
 
         Glide.with(this).load(filterImageUrl).into(filterImageView);
 /*        Glide.with(this).load(filterLineUrl).into(filterLinedView);*/
+
 
 
         view.findViewById(R.id.capture).setOnClickListener(this);
@@ -1947,6 +2013,15 @@ public class Camera2RawFragment extends Fragment
            filterImageUrl = (String) msg.obj; // 메시지를 수신하는 목적지 핸들러에 보낼 임의의 객체
         }
     });
+
+    public Messenger getMessenger2(){return messenger2;}
+    private Messenger messenger2 = new Messenger(new Handler(){
+        @Override
+        public void handleMessage(Message msg2){
+            lineImageUrl = (String) msg2.obj;
+        }
+    });
+
 
 
 
