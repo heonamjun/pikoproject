@@ -2,15 +2,14 @@ package com.example.pikoproject.Activity;
 
 import android.Manifest;
 import android.app.Activity;
-import android.bluetooth.le.AdvertiseData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -21,8 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.pikoproject.R;
 import com.example.pikoproject.Data.Writeinfo;
+import com.example.pikoproject.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseUser;
@@ -136,7 +135,7 @@ public class AddsharingActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
                     ImageView imageView = new ImageView(AddsharingActivity.this);
                     imageView.setLayoutParams(layoutParams);
-                    Glide.with(this).load(Path).override(1000).into(imageView);
+                    Glide.with(this).load(Path).override(1000,1000).into(imageView);
                     parent.addView(imageView);
 
                     EditText editText = new EditText(AddsharingActivity.this );

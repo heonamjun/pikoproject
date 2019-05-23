@@ -43,7 +43,7 @@
             android:label=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Activity.EditActivity" />
-        <activity android:name=".Activity.CameraActivity2" />
+        <activity android:name=".Activity.CameraActivity" />
         <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

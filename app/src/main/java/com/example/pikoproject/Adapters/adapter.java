@@ -12,10 +12,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.pikoproject.Camera.Camera2RawFragment;
-import com.example.pikoproject.Activity.CameraActivity2;
-import com.example.pikoproject.R;
+import com.example.pikoproject.Activity.CameraActivity;
+import com.example.pikoproject.Camera.Camera2BasicFragment;
 import com.example.pikoproject.Data.item;
+import com.example.pikoproject.R;
 
 import java.util.ArrayList;
 
@@ -59,8 +59,8 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
         holder.mimageview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Camera2RawFragment c2r = new Camera2RawFragment();
-                Messenger messenger =c2r.getMessenger();
+                Camera2BasicFragment c2b = new Camera2BasicFragment();
+                Messenger messenger =c2b.getMessenger();
                 Message msg = Message.obtain();
                 msg.obj = mDataset.get(position).getPicUrl(); // 사진 주소 보내기
                 try {
@@ -68,7 +68,7 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-                Messenger messenger2 = c2r.getMessenger2();
+                Messenger messenger2 = c2b.getMessenger2();
                 Message msg2 =Message.obtain();
                 msg2.obj=mDataset.get(position).getLineUrl();
                 try {
@@ -77,7 +77,7 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
                     e.printStackTrace();
                 }
 
-                Intent intent = new Intent(v.getContext(), CameraActivity2.class);
+                Intent intent = new Intent(v.getContext(), CameraActivity.class);
 
                 v.getContext().startActivity(intent);
             }

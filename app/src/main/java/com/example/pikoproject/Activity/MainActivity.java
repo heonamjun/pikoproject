@@ -53,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }else{
-           Intent intent = new Intent(MainActivity.this,SharingActivity.class);
-            startActivity(intent);
-            finish();
         }
 
 
@@ -88,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(),CameraActivity2.class);
+                Intent intent = new Intent(v.getContext(),CameraActivity.class);
                 startActivity(intent);
             }
         });
