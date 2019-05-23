@@ -1,4 +1,4 @@
-package com.example.pikoproject;
+package com.example.pikoproject.Adapters;
 
 import android.content.Intent;
 import android.os.Message;
@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.pikoproject.Camera.Camera2RawFragment;
+import com.example.pikoproject.Activity.CameraActivity2;
+import com.example.pikoproject.R;
+import com.example.pikoproject.Data.item;
 
 import java.util.ArrayList;
 

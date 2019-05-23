@@ -18,7 +18,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Sign_upActivity"
+            android:name=".Activity.GalleryActiviy"
+            android:label="@string/title_activity_gallery_activiy"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".Activity.AddsharingActivity" />
+        <activity android:name=".Activity.SharingActivity" />
+        <activity
+            android:name=".Activity.Sign_upActivity"
             android:label="@string/title_activity_sign_up"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -28,24 +34,23 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="http"
-                    android:host="google.com" />
+                    android:host="google.com"
+                    android:scheme="http" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activity.LoginActivity"
             android:label=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".EditActivity" />
-        <activity android:name=".CameraActivity2" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".Activity.EditActivity" />
+        <activity android:name=".Activity.CameraActivity2" />
+        <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.example.pikoproject;
+package com.example.pikoproject.Activity;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import com.example.pikoproject.Camera.Camera2RawFragment;
+import com.example.pikoproject.R;
 import com.example.pikoproject.databinding.ActivityCamera2Binding;
 
 

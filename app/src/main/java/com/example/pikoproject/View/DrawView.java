@@ -1,4 +1,4 @@
-package com.example.pikoproject;
+package com.example.pikoproject.View;
 
 import android.content.Context;
 import android.graphics.Canvas;

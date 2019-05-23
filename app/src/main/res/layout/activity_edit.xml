@@ -45,7 +45,7 @@
             android:layout_height="match_parent"
             tools:srcCompat="@tools:sample/avatars" />
 
-        <com.example.pikoproject.DrawView
+        <com.example.pikoproject.View.DrawView
             android:id="@+id/drawtouch"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

@@ -1,4 +1,4 @@
-package com.example.pikoproject;
+package com.example.pikoproject.Activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.example.pikoproject.Adapters.adapter;
+import com.example.pikoproject.R;
+import com.example.pikoproject.Data.item;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,6 +50,10 @@ public class MainActivity extends AppCompatActivity {
 
         if(FirebaseAuth.getInstance().getCurrentUser() == null){
             Intent intent = new Intent(MainActivity.this , LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }else{
+           Intent intent = new Intent(MainActivity.this,SharingActivity.class);
             startActivity(intent);
             finish();
         }

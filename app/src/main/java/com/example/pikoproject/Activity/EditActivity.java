@@ -1,4 +1,4 @@
-package com.example.pikoproject;
+package com.example.pikoproject.Activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,6 +16,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.example.pikoproject.View.DrawView;
+import com.example.pikoproject.R;
 
 import java.io.File;
 import java.io.InputStream;

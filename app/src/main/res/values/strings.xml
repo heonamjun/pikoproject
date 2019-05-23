@@ -6,7 +6,7 @@
     <string name="request_permission">This sample needs camera permission.</string>
 
     <string name="StringValue">이미지가 열리지 않습니다.</string>
-
+    <string name="title_activity_gallery_activiy">GalleryActiviy</string>
 
 
 </resources>

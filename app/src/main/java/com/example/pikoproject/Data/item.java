@@ -1,4 +1,4 @@
-package com.example.pikoproject;
+package com.example.pikoproject.Data;
 
 import java.io.Serializable;
 
