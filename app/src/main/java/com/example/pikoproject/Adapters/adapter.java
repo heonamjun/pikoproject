@@ -68,8 +68,14 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder> {
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
-
-
+                Messenger messenger2 = c2r.getMessenger2();
+                Message msg2 =Message.obtain();
+                msg2.obj=mDataset.get(position).getLineUrl();
+                try {
+                    messenger2.send(msg2);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
 
                 Intent intent = new Intent(v.getContext(), CameraActivity2.class);
 

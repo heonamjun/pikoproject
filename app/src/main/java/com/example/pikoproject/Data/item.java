@@ -8,15 +8,17 @@ public class item implements Serializable {
     //public int img;
 
     public String picUrl;
+    public String lineUrl;
     public item() { //파이어에베이스와 연동하려면 매개변수없는걸로 필요?.ㄵ
 
     }
 
 
-    public item(String gps, String title, String picUrl/*,int img*/) {
+    public item(String gps, String title, String picUrl,String lineUrl/*,int img*/) {
         this.gps = gps;
         this.title = title;
         this.picUrl = picUrl;
+        this.lineUrl = lineUrl;
 
     }
     public String getGps() {
@@ -42,4 +44,6 @@ public class item implements Serializable {
     public void setPicUrl(String picUrl) {
         this.picUrl = picUrl;
     }
+    public String getLineUrl(){return lineUrl;}
+    public void setLineUrl(String lineUrl){this.lineUrl = lineUrl;}
 }
