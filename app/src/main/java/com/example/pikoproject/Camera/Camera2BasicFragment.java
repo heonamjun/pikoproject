@@ -33,14 +33,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.Message;
-import android.os.Messenger;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -49,8 +51,12 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -58,7 +64,16 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.StringSignature;
+import com.example.pikoproject.Adapters.OnItemClick;
+import com.example.pikoproject.Adapters.adapter;
+import com.example.pikoproject.Data.item;
 import com.example.pikoproject.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.xiaopo.flying.sticker.DrawableSticker;
 import com.xiaopo.flying.sticker.StickerView;
 
@@ -74,11 +89,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class Camera2BasicFragment extends Fragment
-        implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
+        implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback, OnItemClick {
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -86,8 +102,20 @@ public class Camera2BasicFragment extends Fragment
     static String filterImageUrl = "";
     static String lineImageUrl="";
     static String imagepath="";
+    static ImageView filterImageView;
     StickerView stickerView;
-    static int finalHeight, finalWidth;
+
+
+    Button button; //열기닫기 애니메이션
+    ImageButton button2;
+    boolean isPageOpen = false; //열려있는지 확인
+    LinearLayout listb;
+
+    private static RecyclerView mrecyclerview;
+    private RecyclerView.Adapter madapter;
+    private RecyclerView.LayoutManager mlayoutmanager;
+    private ArrayList<item> mydataset;
+
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private Context mContext;
@@ -446,6 +474,7 @@ public class Camera2BasicFragment extends Fragment
                              Bundle savedInstanceState) {
         mContext = container.getContext();
 
+
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
     }
 
@@ -454,40 +483,62 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
 
+        final Animation open ;
+        final Animation close;
+        listb = (LinearLayout)view.findViewById(R.id.recyclelist);
+
+        //  mrecyclerview = (RecyclerView) findViewById(R.id.recyclerview);
+        mrecyclerview=(RecyclerView)view.findViewById(R.id.recyclerviewtest);
+        mrecyclerview.setHasFixedSize(true); // 카드뷰 사이즈 고정
+        //mlayoutmanager = new GridLayoutManager(this, 2);// 사이클뷰 디자인부분 2열
+        mlayoutmanager = new LinearLayoutManager(mContext , LinearLayout.HORIZONTAL,false); // 가로로 스크롤
+        mrecyclerview.setLayoutManager(mlayoutmanager);
+
+        mydataset = new ArrayList<>();
+
+
+
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(); // 파베 객체 생성.ㄵ
+        DatabaseReference databaseReference = firebaseDatabase.getReference("drama_list"); //v파베에서 참조할 데이터 .ㄵ
+
+        databaseReference.addValueEventListener(new ValueEventListener() { // 파베 데이터참조 값이 변경되거나 부를때 쓰는 리스너.ㄵ
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mydataset.clear();
+                for (DataSnapshot filesnapshot : dataSnapshot.getChildren()) {
+                    item ditem = filesnapshot.getValue(item.class);                    //item.class 에다가 filesnapshot(데이터값) 넣기.ㄵ
+                    mydataset.add(ditem);
+                }
+                madapter.notifyDataSetChanged(); //어댑터에 리스트가 바뀌엇다는걸 알림.ㄵ
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        // 참조 데이터 기준으로 콜벡리스너
+        madapter = new adapter(mydataset,this);
+        mrecyclerview.setAdapter(madapter);
+
+
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         stickerView = ((Activity)mContext).findViewById(R.id.stiker);
+        stickerView.setAlpha(0.5f);
 
-
-        final ImageView filterImageView = ((Activity) mContext).findViewById(R.id.back);
+         filterImageView = ((Activity) mContext).findViewById(R.id.back);
         ImageView filterLinedView = ((Activity) mContext).findViewById(R.id.backLine);
         filterImageView.setImageAlpha(127); //투명도 초기값 50%
 
-
-
-        ViewTreeObserver vto = filterImageView.getViewTreeObserver();
-        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-            @Override
-            public boolean onPreDraw() {
-                filterImageView.getViewTreeObserver().removeOnPreDrawListener(this);
-                finalHeight = mTextureView.getMeasuredHeight();
-                finalWidth=mTextureView.getMeasuredWidth();
-                return true;
-            }
-        });
-
-        stickerView.setAlpha(0.5f);
-
         SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
-        seekBar.setMax(100);
+        seekBar.setMax(250);
         seekBar.setProgress(50);
         seekBar.incrementProgressBy(1);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                float value =(float)progress/100;
-
-
-             //   filterImageView.setImageAlpha(seekBar.getProgress());
+                float value =(float)progress/250;
+                filterImageView.setImageAlpha(seekBar.getProgress());
                 stickerView.setAlpha(value);
             }
 
@@ -503,10 +554,6 @@ public class Camera2BasicFragment extends Fragment
         });
         /* 투명도조절을위해서 seekbar 위젯을 사용*/
 
-
-        //BitmapStickerIcon icon = new BitmapStickerIcon(ContextCompat.getDrawable(this,R.drawable.image))
-
-
         Glide.with(this).load(lineImageUrl).listener(new RequestListener<String, GlideDrawable>() {
             @Override
             public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -520,20 +567,53 @@ public class Camera2BasicFragment extends Fragment
 
                 return false;
             }
-        }).into(finalWidth,finalHeight);
+        }).into(100,100);
 
         Glide.with(this).load(filterImageUrl).into(filterImageView);
-        /*        Glide.with(this).load(filterLineUrl).into(filterLinedView);*/
-
-
 
         view.findViewById(R.id.capture).setOnClickListener(this);
+        view.findViewById(R.id.listbutton).setOnClickListener(this);
         view.findViewById(R.id.imageButton2).setOnClickListener(this);
+        view.findViewById(R.id.imageButton3).setOnClickListener(this); //후레쉬
+
         view.findViewById(R.id.imageButton5).setOnClickListener(this);
         view.findViewById(R.id.imageButton4).setOnClickListener(this);
 
+        close= AnimationUtils.loadAnimation(mContext,R.anim.translate_down);
+        open=AnimationUtils.loadAnimation(mContext,R.anim.translate_up);
+
+
+        button = (Button) view.findViewById(R.id.listbutton);
+        button.setOnClickListener(new View.OnClickListener() {
+            // 열기 / 닫기 의 경우로 보여주려고 할때.
+            @Override
+            public void onClick(View view) {
+
+                    listb.setVisibility(View.VISIBLE);
+                listb.startAnimation(open);
+                      // 왼쪽으로 보이기
+
+                    //여기서 중요한것이 끝난시점으로 처리 해야하므로 이때 리스너를 하나 추가해야함
+                    // 따라서 밑에 클래스 추가
+
+            }
+        });
+        button2 = (ImageButton) view.findViewById(R.id.closeList);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listb.startAnimation(close);
+                listb.setVisibility(View.GONE);
+            }
+        });
+
+
+
 
     }
+
+
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -547,17 +627,12 @@ public class Camera2BasicFragment extends Fragment
         return sdf.format(new Date());
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-    }
 
     @Override
     public void onResume() {
         super.onResume();
         startBackgroundThread();
-        filterImageUrl = "";
+    //    filterImageUrl = "";
         lineImageUrl="";
         String imagepath ="";
         stickerView.removeAllStickers();
@@ -1048,6 +1123,12 @@ public class Camera2BasicFragment extends Fragment
                 getActivity().finish();
                 break;
             }
+            case R.id.listbutton:{
+
+            }
+            case R.id.imageButton3:{
+                refresh();
+            }
         }
     }
     private void openGallary() {
@@ -1075,6 +1156,8 @@ public class Camera2BasicFragment extends Fragment
 
 
 
+
+
                   //  InputStream in = getActivity().getContentResolver().openInputStream(data.getData());
                    // Bitmap img = BitmapFactory.decodeStream(in);
                    // in.close();
@@ -1088,11 +1171,13 @@ public class Camera2BasicFragment extends Fragment
 
                         @Override
                         public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                            stickerView.addSticker(new DrawableSticker(resource));
-                            stickerView.setConstrained(true);
+                            DrawableSticker ds = new DrawableSticker(resource);
+                            stickerView.addSticker(ds);
+
+                            //stickerView.setConstrained(true);
                             return false;
                         }
-                    }).override(MAX_PREVIEW_WIDTH,MAX_PREVIEW_HEIGHT).into(MAX_PREVIEW_WIDTH,MAX_PREVIEW_HEIGHT);
+                    }).override(MAX_PREVIEW_WIDTH,MAX_PREVIEW_HEIGHT).fitCenter().into(MAX_PREVIEW_WIDTH,MAX_PREVIEW_HEIGHT);
 
                //     x.setImageBitmap(img);
                 } catch (Exception e) {
@@ -1268,21 +1353,34 @@ public class Camera2BasicFragment extends Fragment
                     .create();
         }
     }
+    private void refresh(){
+        FragmentManager manager = getActivity().getSupportFragmentManager();
 
-    public Messenger getMessenger(){return messenger;}
-    private Messenger messenger = new Messenger(new Handler(){
-        @Override
-        public void handleMessage(Message msg){
-            filterImageUrl = (String) msg.obj; // 메시지를 수신하는 목적지 핸들러에 보낼 임의의 객체
-        }
-    });
+        FragmentTransaction ft= manager.beginTransaction();
 
-    public Messenger getMessenger2(){return messenger2;}
-    private Messenger messenger2 = new Messenger(new Handler(){
-        @Override
-        public void handleMessage(Message msg2){
-            lineImageUrl = (String) msg2.obj;
+                ft.detach(this).attach(this).commit();
+    }
+
+    @Override
+    public void onClicked (String value){
+                // value this data you receive when increment() / decrement() called
+
+      //  setGlideView(filterImageUrl,filterImageView);
+        if(filterImageUrl==value) {  // 사진 한번더 클릭했을때 이미지뷰 초기화
+            Glide.clear(filterImageView);
+            filterImageUrl="";
         }
-    });
+        else{
+            filterImageUrl= value;
+            Glide.with(this).load(filterImageUrl).into(filterImageView);
+        }
+
+    }
+    private void setGlideView( String path, ImageView iv ){
+        Glide.clear(iv);
+        Glide.with(this).load( path ).signature(new StringSignature(UUID.randomUUID().toString())).into(iv);
+    }
+
+
 
 }
