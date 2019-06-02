@@ -103,13 +103,13 @@ public class Camera2BasicFragment extends Fragment
     static String lineImageUrl="";
     static String imagepath="";
     static ImageView filterImageView;
+    ImageView highlight;
     StickerView stickerView;
 
 
     Button button; //열기닫기 애니메이션
     ImageButton button2;
     boolean isPageOpen = false; //열려있는지 확인
-    LinearLayout listb;
 
     private static RecyclerView mrecyclerview;
     private RecyclerView.Adapter madapter;
@@ -485,7 +485,12 @@ public class Camera2BasicFragment extends Fragment
 
         final Animation open ;
         final Animation close;
-        listb = (LinearLayout)view.findViewById(R.id.recyclelist);
+
+
+        final LinearLayout listb;
+
+        listb = (LinearLayout)view.findViewById(R.id.recyclelist); //연예인 포즈 리스트
+
 
         //  mrecyclerview = (RecyclerView) findViewById(R.id.recyclerview);
         mrecyclerview=(RecyclerView)view.findViewById(R.id.recyclerviewtest);
@@ -528,7 +533,9 @@ public class Camera2BasicFragment extends Fragment
 
          filterImageView = ((Activity) mContext).findViewById(R.id.back);
         ImageView filterLinedView = ((Activity) mContext).findViewById(R.id.backLine);
+
         filterImageView.setImageAlpha(127); //투명도 초기값 50%
+
 
         SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
         seekBar.setMax(250);
@@ -581,6 +588,7 @@ public class Camera2BasicFragment extends Fragment
 
         close= AnimationUtils.loadAnimation(mContext,R.anim.translate_down);
         open=AnimationUtils.loadAnimation(mContext,R.anim.translate_up);
+
 
 
         button = (Button) view.findViewById(R.id.listbutton);
@@ -1104,7 +1112,30 @@ public class Camera2BasicFragment extends Fragment
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.capture:
+                final Animation takepic;
+                takepic=AnimationUtils.loadAnimation(mContext,R.anim.alpha);
                 takePicture();
+                highlight = ((Activity) mContext).findViewById(R.id.highlight);
+                highlight.setVisibility(View.VISIBLE);
+                highlight.startAnimation(takepic);
+                takepic.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        highlight.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+
+
                 break;
             case R.id.imageButton4:
                 if(facingId == CameraCharacteristics.LENS_FACING_FRONT){
@@ -1364,15 +1395,20 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onClicked (String value){
                 // value this data you receive when increment() / decrement() called
+        SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
 
       //  setGlideView(filterImageUrl,filterImageView);
         if(filterImageUrl==value) {  // 사진 한번더 클릭했을때 이미지뷰 초기화
             Glide.clear(filterImageView);
             filterImageUrl="";
+            seekBar.setVisibility(View.GONE);
+
         }
         else{
             filterImageUrl= value;
             Glide.with(this).load(filterImageUrl).into(filterImageView);
+            seekBar.setVisibility(View.VISIBLE);
+
         }
 
     }

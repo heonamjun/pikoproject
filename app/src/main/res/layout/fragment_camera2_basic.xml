@@ -60,11 +60,21 @@
                 android:orientation="vertical">
 
 
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="5"
-                    android:orientation="horizontal">
+                    android:layout_weight="5">
+
+                    <ImageView
+                        android:id="@+id/highlight"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+
+                        android:background="@color/colorPrimary"
+                        android:contentDescription="@string/StringValue"
+                        android:scaleType="fitCenter"
+                        android:visibility="gone" />
 
                     <ImageView
                         android:id="@+id/back"
@@ -74,13 +84,24 @@
 
 
                         android:scaleType="centerCrop"
-                        app:layout_constraintBottom_toTopOf="@+id/bottom_panel" />
+                        android:visibility="visible" />
+
+                    <SeekBar
+                        android:id="@+id/seekBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center"
+                        android:layout_weight="1"
+                        android:paddingBottom="10dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@id/bottom_panel" />
 
                     <com.xiaopo.flying.sticker.StickerView
                         android:id="@+id/stiker"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center">
+
                         <ImageView
                             android:id="@+id/backLine"
                             android:layout_width="match_parent"
@@ -92,7 +113,7 @@
                             />
                     </com.xiaopo.flying.sticker.StickerView>
 
-                </LinearLayout>
+                </FrameLayout>
 
                 <LinearLayout
                     android:id="@+id/bottom_panel"
@@ -204,13 +225,6 @@
                 android:layout_weight="9"
                 app:srcCompat="@drawable/close" />
 
-            <SeekBar
-                android:id="@+id/seekBar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|top"
-                android:layout_weight="1"
-                android:paddingBottom="10dp" />
         </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
