@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.pikoproject.R;
@@ -57,11 +58,14 @@ public class Sign_upActivity extends AppCompatActivity {
 
         if(email.length() > 0 && password.length() > 0 && passwordcheck.length() > 0) {
             if (password.equals(passwordcheck)) {
+                final RelativeLayout loaderLayout = findViewById(R.id.loaderLayout);
+                loaderLayout.setVisibility(View.VISIBLE);
 
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
+                                loaderLayout.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
                                     FirebaseUser user = mAuth.getCurrentUser();
