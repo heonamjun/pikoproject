@@ -20,13 +20,13 @@
         <activity
             android:name=".Activity.GalleryActiviy"
             android:label="@string/title_activity_gallery_activiy"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme"></activity>
         <activity android:name=".Activity.AddsharingActivity" />
         <activity android:name=".Activity.SharingActivity" />
         <activity
             android:name=".Activity.Sign_upActivity"
             android:label="@string/title_activity_sign_up"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -41,9 +41,8 @@
         <activity
             android:name=".Activity.LoginActivity"
             android:label=".LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Activity.EditActivity" />
-        <activity android:name=".Activity.CameraActivity2" />
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Activity.CameraActivity" />
         <activity android:name=".Activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

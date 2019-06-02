@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,159 +10,234 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:id="@+id/top_panel"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/imageButton5"
-            android:layout_width="1dp"
-            android:layout_height="56dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="뒤로가기" />
-
-        <Button
-            android:id="@+id/imageButton4"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:textColor="#111111"
-
-            android:text="전환"
-            android:background="#FFFFFF"
-             />
-
-        <Button
-            android:id="@+id/imageButton3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
-            android:text="플래쉬" />
-    </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
-
-        <com.example.pikoproject.Camera.AutoFitTextureView
-            android:id="@+id/texture"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            app:layout_constraintTop_toBottomOf="@id/top_panel"/>
+            android:layout_weight="1">
 
-        <com.xiaopo.flying.sticker.StickerView
-            android:id="@+id/stiker"
-            android:layout_gravity="center"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent">
-            <ImageView
-                android:id="@+id/back"
+            <Button
+                android:id="@+id/imageButton4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|top"
+                android:layout_weight="1"
+
+                android:background="#FFFFFF"
+                android:text="전환"
+                android:textColor="#111111" />
+
+            <Button
+                android:id="@+id/imageButton3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|top"
+                android:layout_weight="1"
+                android:background="@color/colorPrimaryDark"
+                android:text="플래쉬" />
+
+            <Button
+                android:id="@+id/imageButton5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|left"
+                android:layout_weight="1"
+                android:text="뒤로가기" />
+
+            <com.example.pikoproject.Camera.AutoFitTextureView
+                android:id="@+id/texture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="@id/bottom_panel"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/StringValue"
-                android:scaleType="centerCrop"
-
-                app:layout_constraintBottom_toBottomOf="@id/texture" />
-            <!--app:srcCompat="@drawable/image" -->
-        </com.xiaopo.flying.sticker.StickerView>
+                android:orientation="vertical">
 
 
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5">
 
-        <ImageView
-            android:id="@+id/backLine"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="center"
-            app:layout_constraintBottom_toBottomOf="@id/texture"
-            android:contentDescription="@string/StringValue"
+                    <ImageView
+                        android:id="@+id/highlight"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
 
-            />
 
-        <SeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:paddingBottom="10dp" />
+                        android:background="@color/colorPrimary"
+                        android:contentDescription="@string/StringValue"
+                        android:scaleType="fitCenter"
+                        android:visibility="gone" />
 
-    </FrameLayout>
+                    <ImageView
+                        android:id="@+id/back"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@string/StringValue"
+
+
+                        android:scaleType="centerCrop"
+                        android:visibility="visible" />
+
+                    <SeekBar
+                        android:id="@+id/seekBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|center"
+                        android:layout_weight="1"
+                        android:paddingBottom="10dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@id/bottom_panel" />
+
+                    <com.xiaopo.flying.sticker.StickerView
+                        android:id="@+id/stiker"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center">
+
+                        <ImageView
+                            android:id="@+id/backLine"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:contentDescription="@string/StringValue"
+                            android:scaleType="center"
+                            app:layout_constraintBottom_toBottomOf="@id/bottom_panel"
+
+                            />
+                    </com.xiaopo.flying.sticker.StickerView>
+
+                </FrameLayout>
+
+                <LinearLayout
+                    android:id="@+id/bottom_panel"
+                    android:layout_width="match_parent"
+                    android:layout_height="290dp"
+                    android:layout_gravity="bottom"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:orientation="horizontal"
+                    android:visibility="visible">
+
+
+                    <LinearLayout
+                        android:id="@+id/l3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+
+                        <Button
+                            android:id="@+id/listbutton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="posepic" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/l2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="right|left"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@+id/capture"
+                            android:layout_width="121dp"
+                            android:layout_height="108dp"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:cropToPadding="false"
+                            android:gravity="bottom|center"
+                            android:paddingTop="10dp"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/doublecircle" />
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/l1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingTop="50dp">
+
+                        <ImageButton
+                            android:id="@+id/imageButton2"
+                            android:layout_width="61dp"
+                            android:layout_height="43dp"
+                            android:layout_gravity="center"
+                            android:layout_weight="0"
+                            android:background="@android:color/transparent"
+
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/image"
+
+                            />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!--app:srcCompat="@drawable/image" -->
+
+            </LinearLayout>
+
+
+
+
+
+        </FrameLayout>
+
+    </LinearLayout>
 
 
     <LinearLayout
-        android:id="@+id/bottom_panel"
+        android:id="@+id/recyclelist"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:background="@color/colorPrimary"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/texture">
-
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <LinearLayout
-            android:id="@+id/l3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-
-
-
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/l2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="right|left"
             android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/capture"
-                android:layout_width="121dp"
-                android:layout_height="108dp"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:cropToPadding="false"
-                android:gravity="bottom|center"
-                android:paddingTop="10dp"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/doublecircle" />
-
-
+                android:id="@+id/closeList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="9"
+                app:srcCompat="@drawable/close" />
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/l1"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerviewtest"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:paddingTop="50dp">
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:overScrollMode="never"
+            android:scrollbars="none">
 
-            <ImageButton
-                android:id="@+id/imageButton2"
-                android:layout_width="61dp"
-                android:layout_height="43dp"
-                android:layout_gravity="center"
-                android:layout_weight="0"
-                android:background="@android:color/transparent"
-
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/image"
-
-                />
-        </LinearLayout>
-        </LinearLayout>
-
-
-
+        </android.support.v7.widget.RecyclerView>
     </LinearLayout>
+
+
+</FrameLayout>

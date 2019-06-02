@@ -5,12 +5,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.util.Patterns;
@@ -23,8 +23,8 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.pikoproject.R;
 import com.example.pikoproject.Data.Writeinfo;
+import com.example.pikoproject.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -103,6 +103,7 @@ public class AddsharingActivity extends AppCompatActivity {
                     storeupdate();
                     break;
                 case R.id.load_image:
+
                     if (ContextCompat.checkSelfPermission(AddsharingActivity.this,
                             Manifest.permission.READ_EXTERNAL_STORAGE) !=
                             PackageManager.PERMISSION_GRANTED) {
@@ -296,6 +297,7 @@ public class AddsharingActivity extends AppCompatActivity {
             });
 
         }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
