@@ -1,32 +1,23 @@
 package com.example.pikoproject.Adapters;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Color;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.pikoproject.Data.Writeinfo;
 import com.example.pikoproject.OnListener;
 import com.example.pikoproject.R;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 
 public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingViewHolder> {
@@ -113,18 +104,18 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
 
                 String contents = contentsList.get(i);
                 if (Patterns.WEB_URL.matcher(contents).matches() && contents.contains("https://firebasestorage.googleapis.com/v0/b/piko-mobile.appspot.com/o/posts%")) {
-                    ImageView imageView = new ImageView(activity);
+                    /*ImageView imageView = new ImageView(activity);
                     imageView.setLayoutParams(layoutParams);
                     imageView.setAdjustViewBounds(true);
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                     contentsLayout.addView(imageView);
-                    Glide.with(activity).load(contents).override(500,500).thumbnail(0.1f).into(imageView);
+                    Glide.with(activity).load(contents).override(500,500).thumbnail(0.1f).into(imageView);*/
                 } else {
-                    TextView textView = new TextView(activity);
+                 /*   TextView textView = new TextView(activity);
                     textView.setLayoutParams(layoutParams);
                     textView.setText(contents);
                     textView.setTextColor(Color.rgb(0,0,0));
-                    contentsLayout.addView(textView);
+                    contentsLayout.addView(textView);*/
                 }
               }
            }

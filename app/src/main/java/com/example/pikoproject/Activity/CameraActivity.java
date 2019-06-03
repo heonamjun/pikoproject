@@ -14,6 +14,10 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera2);
         Camera2BasicFragment camera2BasicFragment = new Camera2BasicFragment();
+
+        setContentView(R.layout.activity_sharing);
+        shareFragment sf = new shareFragment();
+
         if (null == savedInstanceState) {
 
             getSupportFragmentManager().beginTransaction()
