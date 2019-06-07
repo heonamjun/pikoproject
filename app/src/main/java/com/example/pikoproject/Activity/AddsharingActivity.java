@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
@@ -25,10 +26,13 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.pikoproject.Data.Writeinfo;
 import com.example.pikoproject.R;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -42,6 +46,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AddsharingActivity extends AppCompatActivity {
     private static final String TAG = "AddsharingActivity";
@@ -59,11 +65,25 @@ public class AddsharingActivity extends AppCompatActivity {
     private Writeinfo writeinfo;
     private StorageReference storageRef;
 
+    protected String username;
+    protected String useremail;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addsharing);
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null){
+            Intent intent = new Intent(AddsharingActivity.this , LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }else{
+            username = user.getUid();
+            useremail = user.getEmail();
+
+        }
 
         parent = findViewById(R.id.contentLayout);
         buttonsbackgroundlayout = findViewById(R.id.buttonsbackgroundlayout);
@@ -74,6 +94,7 @@ public class AddsharingActivity extends AppCompatActivity {
         findViewById(R.id.load_image).setOnClickListener(onClickListener);
         findViewById(R.id.imagemodify).setOnClickListener(onClickListener);
         findViewById(R.id.imagedelete).setOnClickListener(onClickListener);
+
 
         contentEiditText = findViewById(R.id.contentEiditText);
         contentEiditText.setOnFocusChangeListener(onFocusChangeListener);
@@ -138,17 +159,7 @@ public class AddsharingActivity extends AppCompatActivity {
                     String[] list2 = list[0].split("%2F");
                     String name = list2[list2.length -1];
 
-                    StorageReference desertRef = storageRef.child("posts/" + writeinfo.getId() + "/" + name);
-                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(AddsharingActivity.this, " 문제가 발생하였습니다 ", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+
                     pathlist.remove(parent.indexOfChild(selectedView)-1);
                     parent.removeView(selectedView);
                     buttonsbackgroundlayout.setVisibility(View.GONE);
@@ -162,7 +173,6 @@ public class AddsharingActivity extends AppCompatActivity {
         public void onFocusChange(View v, boolean hasFocus) {
             if(hasFocus){
                 selectedEditText = (EditText)v;
-
             }
         }
     };
@@ -184,8 +194,6 @@ public class AddsharingActivity extends AppCompatActivity {
 
     private void storeupdate() {//데이터베이스에 사진및 텍스트 올리기
             final String title = ((EditText) findViewById(R.id.title_edit)).getText().toString();
-
-
             if (title.length() > 0 ) {
                 loaderLayout.setVisibility(View.VISIBLE);
                 final ArrayList<String> contentsList = new ArrayList<>();
@@ -208,7 +216,7 @@ public class AddsharingActivity extends AppCompatActivity {
                                     contentsList.add(text);
                                 }
                             }else if (!Patterns.WEB_URL.matcher(pathlist.get(pathCount)).matches()){
-                                String path =pathlist.get(pathCount);
+                                String path = pathlist.get(pathCount);
                                 successCount++;
                                 contentsList.add(path);
                                 String[] pathArray = path.split("\\.");
@@ -234,7 +242,7 @@ public class AddsharingActivity extends AppCompatActivity {
                                                     contentsList.set(index,uri.toString());
 
                                                     if(successCount == 0){
-                                                        Writeinfo writeinfo = new Writeinfo(title, contentsList ,user.getUid(), date);
+                                                        Writeinfo writeinfo = new Writeinfo(title, contentsList ,user.getUid(), date , user.getUid(), user.getEmail());
                                                         Uploder(documentReference ,writeinfo);
                                                     }
                                                 }
@@ -249,7 +257,7 @@ public class AddsharingActivity extends AppCompatActivity {
                         }
                 }
                 if(successCount == 0){
-                    Uploder(documentReference ,new Writeinfo(title, contentsList ,user.getUid(),date));
+                    Uploder(documentReference ,new Writeinfo(title, contentsList ,user.getUid(), date));
                 }
 
 
@@ -261,40 +269,24 @@ public class AddsharingActivity extends AppCompatActivity {
         }
 
         private void Uploder(DocumentReference documentReference, Writeinfo writeinfo){
-        documentReference.set(writeinfo)
+        documentReference.set(writeinfo.getWriteinfo())
         .addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
                     Log.d(TAG, "DocumentSnapshot successfully written!");
+                    loaderLayout.setVisibility(View.GONE);
                     finish();
                 }
             })
             .addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Log.w(TAG, "Error writing document", e);
-                }
-            });
 
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collection("User")
-                    .add(writeinfo)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            loaderLayout.setVisibility(View.GONE);
-                            startToast("성공");
-                            Log.d(TAG,"DocumentSnapshot written with ID" + documentReference.getId());
-                            finish();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    startToast("실패");
-                    Log.w(TAG,"Error adding document",e);
+                    Log.w(TAG, "Error writing document", e);
                     loaderLayout.setVisibility(View.GONE);
                 }
             });
+
 
         }
 
@@ -312,6 +304,7 @@ public class AddsharingActivity extends AppCompatActivity {
                     LinearLayout linearLayout = new LinearLayout(AddsharingActivity.this);
                     linearLayout.setLayoutParams(layoutParams);
                     linearLayout.setOrientation(LinearLayout.VERTICAL);
+
                     if(selectedEditText == null){
                         parent.addView(linearLayout);
                     }else{
@@ -336,7 +329,7 @@ public class AddsharingActivity extends AppCompatActivity {
                             selectedimageView = (ImageView)v;
                         }
                     });
-                    Glide.with(this).load(Path).override(1000,1000).into(imageView);
+                    Glide.with(this).load(Path).override(500,500).into(imageView);
                     linearLayout.addView(imageView);
 
                     EditText editText = new EditText(AddsharingActivity.this );
@@ -354,7 +347,7 @@ public class AddsharingActivity extends AppCompatActivity {
                     String ImagePath = data.getStringExtra("ImagePath");
                     View selectedView = (View)selectedimageView.getParent();
                     pathlist.set(parent.indexOfChild(selectedView)-1,ImagePath);
-                    Glide.with(this).load(ImagePath).override(1000,1000).into(selectedimageView);
+                    Glide.with(this).load(ImagePath).override(500,500).into(selectedimageView);
                 }
                 break;
             }
@@ -362,7 +355,7 @@ public class AddsharingActivity extends AppCompatActivity {
     }
 
 
-    private void postinit(){
+    private void postinit(){//수정
         if(writeinfo != null){
             title_edit.setText(writeinfo.getTitle());
             ArrayList<String> contentsList = writeinfo.getContents();
@@ -389,7 +382,7 @@ public class AddsharingActivity extends AppCompatActivity {
                             selectedimageView = (ImageView)v;
                         }
                     });
-                    Glide.with(this).load(contents).override(1000,1000).into(imageView);
+                    Glide.with(this).load(contents).override(500,500).into(imageView);
                     linearLayout.addView(imageView);
 
                     EditText editText = new EditText(AddsharingActivity.this );
@@ -411,6 +404,8 @@ public class AddsharingActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
 
     private void startToast(String msg){

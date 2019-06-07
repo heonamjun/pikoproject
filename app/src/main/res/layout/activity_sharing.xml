@@ -5,7 +5,6 @@
     android:layout_height="match_parent">
 
 
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/SharingrecycleView"
         android:layout_width="match_parent"
@@ -22,5 +21,11 @@
         android:clickable="true"
         android:src="@drawable/ic_add_black_24dp"
         app:backgroundTint="@color/colorPrimaryDark" />
+
+    <include
+        layout="@layout/view_loader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.pikoproject.Adapters.SharingAdapter;
+import com.example.pikoproject.Data.Likeinfo;
 import com.example.pikoproject.Data.Writeinfo;
 import com.example.pikoproject.OnListener;
 import com.example.pikoproject.R;
@@ -51,7 +52,8 @@ public class SharingActivity extends AppCompatActivity {
 
 
         postList = new ArrayList<>();
-        sharingAdapter = new SharingAdapter(SharingActivity.this, postList);
+        ArrayList<Likeinfo> likelist = new ArrayList<>();
+                sharingAdapter = new SharingAdapter(SharingActivity.this, postList, likelist);
         sharingAdapter.setOnListener(onListener);
 
 

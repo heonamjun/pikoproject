@@ -12,8 +12,11 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.pikoproject.Adapters.SharingAdapter;
+import com.example.pikoproject.Data.Likeinfo;
 import com.example.pikoproject.Data.Writeinfo;
 import com.example.pikoproject.OnListener;
 import com.example.pikoproject.R;
@@ -21,52 +24,77 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
 
 public class shareFragment extends Fragment {
     private final static String TAG = "SharingActivity";
     private FirebaseFirestore firebaseFirestore;
     private StorageReference storageRef;
+    private RelativeLayout loaderLayout;
     private SharingAdapter sharingAdapter;
     private ArrayList<Writeinfo> postList;
+    private ArrayList<Likeinfo> likeList;
+    private FirebaseUser firebaseUser;
     private int successCount;
-    private Context mContext;
-
-
+    private Context mContext ;
+    protected String uesrid;
+    protected String uesremail;
+    static int likesCount;
+    Likeinfo likeinfo = new Likeinfo(likesCount);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        postUpdate();
+
         super.onCreate(savedInstanceState);
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        SharingActivity sr = new SharingActivity();
-        View view = inflater.inflate(R.layout.activity_sharing,
-                container,
-                false);
+        postUpdate();
+        View view = inflater.inflate(R.layout.activity_sharing,container,false);
         view.findViewById(R.id.floatingActionButton).setOnClickListener(onClickListener);
         RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.SharingrecycleView);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(firebaseUser == null){
+            Intent intent = new Intent(getActivity() , LoginActivity.class);
+            startActivity(intent);
+
+        }else{
+            uesrid = firebaseUser.getUid();
+            uesremail = firebaseUser.getEmail();
+
+        }
+
+
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
-
         postList = new ArrayList<>();
-        sharingAdapter = new SharingAdapter(sr, postList);
+        likeList = new ArrayList<>();
+        sharingAdapter = new SharingAdapter(getActivity(), postList, likeList);
         sharingAdapter.setOnListener(onListener);
-
-
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
@@ -84,7 +112,23 @@ public class shareFragment extends Fragment {
     OnListener onListener = new OnListener() {
         @Override
         public void onDelete(int position) {
+//            loaderLayout.setVisibility(View.VISIBLE);
             final String id = postList.get(position).getId();
+
+
+
+                             /* StorageReference desertRef = storageRef.child("posts/" + writeinfo.getId() + "/" + name);
+                    desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Toast.makeText(AddsharingActivity.this, " 문제가 발생하였습니다 ", Toast.LENGTH_SHORT).show();
+                        }
+                    });*/
+
 
             ArrayList<String> contentsList = postList.get(position).getContents();
             for (int i = 0; i < contentsList.size() ; i ++){
@@ -101,10 +145,12 @@ public class shareFragment extends Fragment {
                         public void onSuccess(Void aVoid) {
                             successCount--;
                             storeUploader(id);
+                           // loaderLayout.setVisibility(View.GONE);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
+                           // loaderLayout.setVisibility(View.GONE);
                             //Toast.makeText(SharingActivity.this, " 문제가 발생하였습니다 ", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -126,30 +172,65 @@ public class shareFragment extends Fragment {
         public void onClick(View v) {
             switch (v.getId()){
                 case R.id.floatingActionButton :
-                    mstartActivity(AddsharingActivity.class);
+                    Intent intent = new Intent(getActivity(),AddsharingActivity.class);
+                    startActivity(intent);
+
                     break;
             }
         }
     };
+
+
+
+
+
     private void postUpdate(){
         firebaseFirestore = FirebaseFirestore.getInstance();
-        CollectionReference collectionReference = firebaseFirestore.collection("posts");
-        collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get() // query .....  사진 순서대로 나오기
+        final CollectionReference collectionReference = firebaseFirestore.collection("posts");
+      collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get() // query .....  사진 순서대로 나오기
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             postList.clear();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                postList.add(new Writeinfo(
+                            for (final QueryDocumentSnapshot document : task.getResult()) {
+
+/*                              postList.add(new Writeinfo(
                                         document.getData().get("title").toString(),
                                         (ArrayList<String>)document.getData().get("contents"),
                                         document.getData().get("publicsher").toString(),
-                                        new Date(document.getDate("createdAt").getTime())
-                                        ,document.getId()));
+                                        new Date(document.getDate("createdAt").getTime()),
+                                        document.getId()));*/
+
+                                final Writeinfo writeinfo = new Writeinfo(
+                                        document.getData().get("title").toString(),
+                                        (ArrayList<String>)document.getData().get("contents"),
+                                        document.getData().get("publicsher").toString(),
+                                        new Date(document.getDate("createdAt").getTime()),
+                                        collectionReference.getId()
+                                );
+
+                                writeinfo.setEmail(document.getData().get("email").toString());
+
+
+                               DocumentReference postRef = document.getReference();
+                                final CollectionReference likeRef = postRef.collection("likes");
+                                likeRef.get()
+                                      .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                                                if(task1.isSuccessful()){
+                                                    //likes 콜렉션을 받아오는데 성공
+                                                    QuerySnapshot likesresult = task1.getResult();
+                                                    likesCount = likesresult.size();
+
+                                                }
+                                            }
+                                        });
+                                writeinfo.setLikecount(likesCount);
+                                postList.add(writeinfo);
                             }
-                            sharingAdapter.notifyDataSetChanged();// 삭제시 리사이클 초기화
+                           sharingAdapter.notifyDataSetChanged();// 삭제시 리사이클 초기화
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -164,7 +245,7 @@ public class shareFragment extends Fragment {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                    //        Toast.makeText(SharingActivity.this,"삭제하였습니다.",Toast.LENGTH_SHORT).show();
+                           Toast.makeText(getActivity(),"삭제하였습니다.",Toast.LENGTH_SHORT).show();
                             //Log.d(TAG, "DocumentSnapshot successfully deleted!");
 
                             postUpdate();
@@ -182,11 +263,11 @@ public class shareFragment extends Fragment {
 
 
     public void mstartActivity(Class c){
-        Intent intent = new Intent(mContext, c);
+        Intent intent = new Intent(getActivity(), c);
         startActivity(intent);
     }
-    public void mstartActivity(Class c, Writeinfo writeinfo){
-        Intent intent = new Intent(mContext, c);
+    public void mstartActivity(Class c,Writeinfo writeinfo){
+        Intent intent = new Intent(getActivity(), c);
         intent.putExtra("Info", writeinfo);
         startActivity(intent);
     }

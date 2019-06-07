@@ -68,33 +68,49 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.pikoproject.Adapters.PagerAdapter;
 import com.example.pikoproject.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.auth.User;
 
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
+    private Button loginout_btn;
+    private FirebaseUser firebaseUser;
+    public static String username;
+    public static String useremail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(firebaseUser == null){
+            Intent intent = new Intent(MainActivity.this , LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }else{
+            username = firebaseUser.getUid();
+            useremail = firebaseUser.getEmail();
+
+        }
+
+
+
+
+/*        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
 
         mViewPager = (ViewPager) findViewById(R.id.container);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent,1);
 
-            }
-        });
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("첫번째"));
         tabLayout.addTab(tabLayout.newTab().setText("두번째"));
@@ -121,6 +137,19 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        loginout_btn = (Button) findViewById(R.id.Loginout1);
+        loginout_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+             FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(MainActivity.this , LoginActivity.class);
+                startActivity(intent);
+
+            }
+        });
+
     }
 
 

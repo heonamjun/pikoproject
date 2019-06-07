@@ -66,7 +66,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
 import com.example.pikoproject.Adapters.OnItemClick;
+import com.example.pikoproject.Adapters.OnItemClick3;
 import com.example.pikoproject.Adapters.adapter;
+import com.example.pikoproject.Data.Writeinfo;
 import com.example.pikoproject.Data.item;
 import com.example.pikoproject.R;
 import com.google.firebase.database.DataSnapshot;
@@ -94,7 +96,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class Camera2BasicFragment extends Fragment
-        implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback, OnItemClick {
+        implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback, OnItemClick, OnItemClick3 {
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -112,10 +114,13 @@ public class Camera2BasicFragment extends Fragment
     boolean isPageOpen = false; //열려있는지 확인
 
     private static RecyclerView mrecyclerview;
+
     private RecyclerView.Adapter madapter;
     private RecyclerView.LayoutManager mlayoutmanager;
     private ArrayList<item> mydataset;
-
+    private ArrayList<Writeinfo> mydataset2;
+    private static RecyclerView mrecyclerview2;
+    private RecyclerView.Adapter madapter2;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private Context mContext;
@@ -475,6 +480,8 @@ public class Camera2BasicFragment extends Fragment
         mContext = container.getContext();
 
 
+
+
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
     }
 
@@ -484,7 +491,10 @@ public class Camera2BasicFragment extends Fragment
     public void onViewCreated(final View view, Bundle savedInstanceState) {
 
 //        mPreviewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE,CaptureRequest.CONTROL_EFFECT_MODE_MONO);
-
+        if(getArguments() != null){
+            filterImageUrl = getArguments().getString("URI"); // 전달한 key 값 String param2 = getArguments().getString("param2"); // 전달한 key 값 }
+            System.out.println(filterImageUrl);
+        }
         final Animation open ;
         final Animation close;
 
@@ -502,7 +512,7 @@ public class Camera2BasicFragment extends Fragment
         mrecyclerview.setLayoutManager(mlayoutmanager);
 
         mydataset = new ArrayList<>();
-
+        mydataset2 = new ArrayList<>();
 
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(); // 파베 객체 생성.ㄵ
@@ -526,6 +536,13 @@ public class Camera2BasicFragment extends Fragment
         });
         // 참조 데이터 기준으로 콜벡리스너
         madapter = new adapter(mydataset,this);
+    //    madapter2 =new SharingAdapter(mydataset2,this);
+
+        mrecyclerview2=(RecyclerView)view.findViewById(R.id.recyclerviewtest);
+        mrecyclerview2.setHasFixedSize(true); // 카드뷰 사이즈 고정
+
+       mrecyclerview2.setAdapter(madapter2);
+
         mrecyclerview.setAdapter(madapter);
 
 
@@ -1415,6 +1432,27 @@ public class Camera2BasicFragment extends Fragment
         }
 
     }
+    @Override
+    public void onClicked3 (String value){
+        // value this data you receive when increment() / decrement() called
+        SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
+
+        //  setGlideView(filterImageUrl,filterImageView);
+        if(filterImageUrl==value) {  // 사진 한번더 클릭했을때 이미지뷰 초기화
+            Glide.clear(filterImageView);
+            filterImageUrl="";
+            seekBar.setVisibility(View.GONE);
+
+        }
+        else{
+            filterImageUrl= value;
+            Glide.with(this).load(filterImageUrl).into(filterImageView);
+            seekBar.setVisibility(View.VISIBLE);
+
+        }
+
+    }
+
     private void setGlideView( String path, ImageView iv ){
         Glide.clear(iv);
         Glide.with(this).load( path ).signature(new StringSignature(UUID.randomUUID().toString())).into(iv);

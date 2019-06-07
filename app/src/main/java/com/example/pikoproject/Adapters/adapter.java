@@ -58,6 +58,7 @@ public class adapter extends RecyclerView.Adapter<adapter.VIewHolder>  {
             @Override
             public void onClick(View v) {
              mCallback.onClicked(mDataset.get(position).getPicUrl());
+                System.out.println(mDataset.get(position).getPicUrl());
             }
         });
 

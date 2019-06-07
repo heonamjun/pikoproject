@@ -3,6 +3,8 @@ package com.example.pikoproject.Data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Writeinfo implements Serializable {
     private String title;
@@ -10,6 +12,24 @@ public class Writeinfo implements Serializable {
     private String publicsher;
     private Date createdAt;
     private String id;
+    private int likecount;
+    private boolean userliked;
+    private String likeid ;
+    private String email;
+    private ArrayList<String> chat;
+
+    public  Writeinfo(){}
+
+
+
+    public Writeinfo(String title, ArrayList<String> contents, String publicsher,Date createdAt,String id,String email){
+        this.title = title;
+        this.contents = contents;
+        this.publicsher = publicsher;
+        this.createdAt = createdAt;
+        this.id = id;
+        this.email = email;
+    }
 
     public Writeinfo(String title, ArrayList<String> contents, String publicsher,Date createdAt,String id){
         this.title = title;
@@ -17,13 +37,39 @@ public class Writeinfo implements Serializable {
         this.publicsher = publicsher;
         this.createdAt = createdAt;
         this.id = id;
+
     }
+
 
     public Writeinfo(String title, ArrayList<String> contents, String publicsher,Date createdAt){
         this.title = title;
         this.contents = contents;
         this.publicsher = publicsher;
         this.createdAt = createdAt;
+    }
+
+
+    public Map<String , Object> getWriteinfo(){
+        Map<String , Object> docdata = new HashMap<>();
+        docdata.put("title",title);
+        docdata.put("contents",contents);
+        docdata.put("publicsher",publicsher);
+        docdata.put("createdAt",createdAt);
+        docdata.put("id",id);
+        docdata.put("likecount",likecount);
+        docdata.put("userliked",userliked);
+        docdata.put("likeid",likeid);
+        docdata.put("email",email);
+        docdata.put("chat",chat);
+        return docdata;
+    }
+
+    public ArrayList<String> getChat() {
+        return chat;
+    }
+
+    public void setChat(ArrayList<String> chat) {
+        this.chat = chat;
     }
 
     public String getId() {
@@ -64,5 +110,37 @@ public class Writeinfo implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public int getLikecount() {
+        return likecount;
+    }
+
+    public void setLikecount(int likecount) {
+        this.likecount = likecount;
+    }
+
+    public boolean isUserliked() {
+        return userliked;
+    }
+
+    public void setUserliked(boolean userliked) {
+        this.userliked = userliked;
+    }
+
+    public String getLikeid() {
+        return likeid;
+    }
+
+    public void setLikeid(String likeid) {
+        this.likeid = likeid;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
