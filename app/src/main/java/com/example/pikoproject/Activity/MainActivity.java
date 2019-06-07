@@ -1,81 +1,13 @@
 package com.example.pikoproject.Activity;
-/*
-
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
-
-import com.example.pikoproject.Data.item;
-import com.example.pikoproject.R;
-import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.ArrayList;
-
-public class MainActivity extends AppCompatActivity {
-
-
-    final int PickfromAlbum = 1;
-    private static RecyclerView mrecyclerview;
-    private RecyclerView.Adapter madapter;
-    private RecyclerView.LayoutManager mlayoutmanager;
-    private ArrayList<item> mydataset;
-    private Uri photouri;
-    private ImageButton btn1;
-    private Button loginout_btn;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-
-        btn1 = (ImageButton)findViewById(R.id.cameraselect);
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(),CameraActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        loginout_btn = (Button) findViewById(R.id.Loginout);
-        loginout_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(MainActivity.this , LoginActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-
-
-    }
-*/
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.pikoproject.Adapters.PagerAdapter;
 import com.example.pikoproject.R;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.auth.User;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,24 +16,13 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     public static String username;
     public static String useremail;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        if(firebaseUser == null){
-            Intent intent = new Intent(MainActivity.this , LoginActivity.class);
-            startActivity(intent);
-            finish();
-        }else{
-            username = firebaseUser.getUid();
-            useremail = firebaseUser.getEmail();
-
-        }
-
+     /*   Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);  */
 
 
 
@@ -134,18 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
-
-        loginout_btn = (Button) findViewById(R.id.Loginout1);
-        loginout_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-             FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(MainActivity.this , LoginActivity.class);
-                startActivity(intent);
 
             }
         });

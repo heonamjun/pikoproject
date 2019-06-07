@@ -33,6 +33,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Message;
+import android.os.Messenger;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -65,10 +67,11 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.StringSignature;
+import com.example.pikoproject.Adapters.LineAdapter;
 import com.example.pikoproject.Adapters.OnItemClick;
-import com.example.pikoproject.Adapters.OnItemClick3;
+import com.example.pikoproject.Adapters.OnItemClick2;
 import com.example.pikoproject.Adapters.adapter;
-import com.example.pikoproject.Data.Writeinfo;
+import com.example.pikoproject.Data.LineItem;
 import com.example.pikoproject.Data.item;
 import com.example.pikoproject.R;
 import com.google.firebase.database.DataSnapshot;
@@ -96,7 +99,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class Camera2BasicFragment extends Fragment
-        implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback, OnItemClick, OnItemClick3 {
+        implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback, OnItemClick, OnItemClick2 {
 
     /**
      * Conversion from screen rotation to JPEG orientation.
@@ -109,18 +112,21 @@ public class Camera2BasicFragment extends Fragment
     StickerView stickerView;
 
 
-    Button button; //열기닫기 애니메이션
-    ImageButton button2;
+    Button button,buttonline; //열기닫기 애니메이션
+
+    ImageButton button2,button3;
     boolean isPageOpen = false; //열려있는지 확인
+    boolean clickk = true; // 좌우반전 사용
+
 
     private static RecyclerView mrecyclerview;
-
+    private static RecyclerView Lrecyclerview;
     private RecyclerView.Adapter madapter;
+    private RecyclerView.Adapter Ladapter;
     private RecyclerView.LayoutManager mlayoutmanager;
     private ArrayList<item> mydataset;
-    private ArrayList<Writeinfo> mydataset2;
-    private static RecyclerView mrecyclerview2;
-    private RecyclerView.Adapter madapter2;
+    private ArrayList<LineItem> Ldataset;
+
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private Context mContext;
@@ -480,8 +486,6 @@ public class Camera2BasicFragment extends Fragment
         mContext = container.getContext();
 
 
-
-
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
     }
 
@@ -491,17 +495,17 @@ public class Camera2BasicFragment extends Fragment
     public void onViewCreated(final View view, Bundle savedInstanceState) {
 
 //        mPreviewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE,CaptureRequest.CONTROL_EFFECT_MODE_MONO);
-        if(getArguments() != null){
-            filterImageUrl = getArguments().getString("URI"); // 전달한 key 값 String param2 = getArguments().getString("param2"); // 전달한 key 값 }
-            System.out.println(filterImageUrl);
-        }
+
+
+        Bundle argument =getArguments();
         final Animation open ;
         final Animation close;
 
 
-        final LinearLayout listb;
+        final LinearLayout listb,lista;
 
         listb = (LinearLayout)view.findViewById(R.id.recyclelist); //연예인 포즈 리스트
+        lista =  (LinearLayout)view.findViewById(R.id.recyclelist2);
 
 
         //  mrecyclerview = (RecyclerView) findViewById(R.id.recyclerview);
@@ -510,13 +514,21 @@ public class Camera2BasicFragment extends Fragment
         //mlayoutmanager = new GridLayoutManager(this, 2);// 사이클뷰 디자인부분 2열
         mlayoutmanager = new LinearLayoutManager(mContext , LinearLayout.HORIZONTAL,false); // 가로로 스크롤
         mrecyclerview.setLayoutManager(mlayoutmanager);
+        Lrecyclerview=(RecyclerView)view.findViewById(R.id.recyclerviewLine);
+        Lrecyclerview.setHasFixedSize(true); // 카드뷰 사이즈 고정
+        mlayoutmanager = new LinearLayoutManager(mContext , LinearLayout.HORIZONTAL,false); // 가로로 스크롤
+        Lrecyclerview.setLayoutManager(mlayoutmanager);
+
+
 
         mydataset = new ArrayList<>();
-        mydataset2 = new ArrayList<>();
+        Ldataset = new ArrayList<>();
+
 
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(); // 파베 객체 생성.ㄵ
         DatabaseReference databaseReference = firebaseDatabase.getReference("drama_list"); //v파베에서 참조할 데이터 .ㄵ
+        DatabaseReference databaseReference2 = firebaseDatabase.getReference("Line_list"); //v파베에서 참조할 데이터 .ㄵ
 
         databaseReference.addValueEventListener(new ValueEventListener() { // 파베 데이터참조 값이 변경되거나 부를때 쓰는 리스너.ㄵ
             @Override
@@ -531,19 +543,29 @@ public class Camera2BasicFragment extends Fragment
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+            }
+        });
+        databaseReference2.addValueEventListener(new ValueEventListener() { // 파베 데이터참조 값이 변경되거나 부를때 쓰는 리스너.ㄵ
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mydataset.clear();
+                for (DataSnapshot filesnapshot : dataSnapshot.getChildren()) {
+                    LineItem litem = filesnapshot.getValue(LineItem.class);                    //item.class 에다가 filesnapshot(데이터값) 넣기.ㄵ
+                    Ldataset.add(litem);
+                }
+                Ladapter.notifyDataSetChanged(); //어댑터에 리스트가 바뀌엇다는걸 알림.ㄵ
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
         // 참조 데이터 기준으로 콜벡리스너
         madapter = new adapter(mydataset,this);
-    //    madapter2 =new SharingAdapter(mydataset2,this);
-
-        mrecyclerview2=(RecyclerView)view.findViewById(R.id.recyclerviewtest);
-        mrecyclerview2.setHasFixedSize(true); // 카드뷰 사이즈 고정
-
-       mrecyclerview2.setAdapter(madapter2);
+        Ladapter = new LineAdapter(Ldataset,this);
 
         mrecyclerview.setAdapter(madapter);
+        Lrecyclerview.setAdapter(Ladapter);
+
 
 
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
@@ -625,6 +647,17 @@ public class Camera2BasicFragment extends Fragment
 
             }
         });
+        buttonline=(Button)view.findViewById(R.id.linebutton);
+
+        buttonline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lista.setVisibility(View.VISIBLE);
+                lista.startAnimation(open);
+
+            }
+        });
+
         button2 = (ImageButton) view.findViewById(R.id.closeList);
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -633,6 +666,24 @@ public class Camera2BasicFragment extends Fragment
                 listb.setVisibility(View.GONE);
             }
         });
+        button3 = (ImageButton) view.findViewById(R.id.closeList2);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                lista.startAnimation(close);
+                lista.setVisibility(View.GONE);
+            }
+        });
+        Button imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
+
+        if(filterImageUrl!="") {  // 사진 한번더 클릭했을때 이미지뷰 초기화
+
+            seekBar.setVisibility(View.VISIBLE);
+            imgbtton.setVisibility(View.VISIBLE);
+
+        }
+
 
 
 
@@ -650,7 +701,7 @@ public class Camera2BasicFragment extends Fragment
     }
 
     private static String generateTimestamp() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSS", Locale.KOREA);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSS", Locale.KOREA);
         return sdf.format(new Date());
     }
 
@@ -1141,7 +1192,6 @@ public class Camera2BasicFragment extends Fragment
                 takepic.setAnimationListener(new Animation.AnimationListener() {
                     @Override
                     public void onAnimationStart(Animation animation) {
-
                     }
 
                     @Override
@@ -1171,14 +1221,32 @@ public class Camera2BasicFragment extends Fragment
                 break;
             }
             case R.id.imageButton5: {
-                getActivity().finish();
+                Glide.clear(filterImageView);
+                stickerView.removeAllStickers();
+
                 break;
             }
             case R.id.listbutton:{
 
             }
-            case R.id.imageButton3:{
-                refresh();
+            case R.id.imageButton3: {
+                if(clickk==true ){
+                    filterImageView.setRotationY(180); // 사진 좌우 변경
+                    stickerView.setRotationY(180);
+                    clickk=false;
+                    break;
+                }
+                else if(clickk==false){
+                    filterImageView.setRotationY(0);
+                    stickerView.setRotationY(0);
+                    clickk=true;
+                    break;
+                }
+
+
+
+
+
             }
         }
     }
@@ -1214,21 +1282,7 @@ public class Camera2BasicFragment extends Fragment
                    // in.close();
                     // 이미지 표시
                   //  ImageView x = getActivity().findViewById(R.id.back);
-                    Glide.with(this).load(imagepath).listener(new RequestListener<String, GlideDrawable>() {
-                        @Override
-                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                            return false;
-                        }
 
-                        @Override
-                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                            DrawableSticker ds = new DrawableSticker(resource);
-                            stickerView.addSticker(ds);
-
-                            //stickerView.setConstrained(true);
-                            return false;
-                        }
-                    }).override(MAX_PREVIEW_WIDTH,MAX_PREVIEW_HEIGHT).fitCenter().into(MAX_PREVIEW_WIDTH,MAX_PREVIEW_HEIGHT);
 
                //     x.setImageBitmap(img);
                 } catch (Exception e) {
@@ -1416,48 +1470,78 @@ public class Camera2BasicFragment extends Fragment
     public void onClicked (String value){
                 // value this data you receive when increment() / decrement() called
         SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
-
+        Button imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
       //  setGlideView(filterImageUrl,filterImageView);
         if(filterImageUrl==value) {  // 사진 한번더 클릭했을때 이미지뷰 초기화
             Glide.clear(filterImageView);
+            stickerView.removeAllStickers();
+
             filterImageUrl="";
             seekBar.setVisibility(View.GONE);
+            imgbtton.setVisibility(View.GONE);
 
         }
         else{
             filterImageUrl= value;
+            stickerView.removeAllStickers();
+            //Glide.with(this).load(filterImageUrl).into(filterImageView);
             Glide.with(this).load(filterImageUrl).into(filterImageView);
             seekBar.setVisibility(View.VISIBLE);
+            imgbtton.setVisibility(View.VISIBLE);
 
         }
 
     }
     @Override
-    public void onClicked3 (String value){
+    public void onClicked2 (String value){
         // value this data you receive when increment() / decrement() called
         SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
-
+        Button imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
         //  setGlideView(filterImageUrl,filterImageView);
-        if(filterImageUrl==value) {  // 사진 한번더 클릭했을때 이미지뷰 초기화
+        if(lineImageUrl==value) {  // 사진 한번더 클릭했을때 이미지뷰 초기화
+
             Glide.clear(filterImageView);
-            filterImageUrl="";
+            stickerView.removeAllStickers();
+            lineImageUrl="";
             seekBar.setVisibility(View.GONE);
+            imgbtton.setVisibility(View.GONE);
 
         }
         else{
-            filterImageUrl= value;
-            Glide.with(this).load(filterImageUrl).into(filterImageView);
+            lineImageUrl= value;
+            Glide.clear(filterImageView);
+            Glide.with(this).load(lineImageUrl).listener(new RequestListener<String, GlideDrawable>() {
+                @Override
+                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    stickerView.addSticker(new DrawableSticker(resource));
+                    stickerView.setConstrained(true);
+
+                    return false;
+                }
+            }).into(200,200);
+
             seekBar.setVisibility(View.VISIBLE);
+            imgbtton.setVisibility(View.VISIBLE);
 
         }
 
     }
-
     private void setGlideView( String path, ImageView iv ){
         Glide.clear(iv);
         Glide.with(this).load( path ).signature(new StringSignature(UUID.randomUUID().toString())).into(iv);
     }
 
-
+    public Messenger getMessenger(){return messenger;}
+    private Messenger messenger = new Messenger(new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            filterImageUrl = (String) msg.obj; // 메시지를 수신하는 목적지 핸들러에 보낼 임의의 객체
+        }
+    });
 
 }

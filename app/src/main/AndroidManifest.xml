@@ -23,6 +23,7 @@
             android:theme="@style/AppTheme"></activity>
         <activity android:name=".Activity.AddsharingActivity" />
         <activity android:name=".Activity.SharingActivity" />
+
         <activity
             android:name=".Activity.Sign_upActivity"
             android:label="@string/title_activity_sign_up"

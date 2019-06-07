@@ -2,10 +2,11 @@ package com.example.pikoproject.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
-import android.os.Bundle;
-import android.service.autofill.Dataset;
-import android.support.annotation.NonNull;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -19,34 +20,25 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.pikoproject.Activity.MainActivity;
 import com.example.pikoproject.Camera.Camera2BasicFragment;
 import com.example.pikoproject.Data.Likeinfo;
 import com.example.pikoproject.Data.Writeinfo;
 import com.example.pikoproject.OnListener;
 import com.example.pikoproject.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 
 public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingViewHolder> {
@@ -58,6 +50,7 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
     private Button chatsend;
     private CheckBox heart;
     private FirebaseUser user;
+    private Context mcontext;
 
 
 
@@ -121,12 +114,18 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
 
                     }
                 }
+                Camera2BasicFragment c2r = new Camera2BasicFragment();
+                Messenger messenger =c2r.getMessenger();
+                Message msg = Message.obtain();
+                msg.obj = imageUri; // 사진 주소 보내기
+                try {
+                    messenger.send(msg);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                Intent intent = new Intent(v.getContext(), MainActivity.class);
 
-                Camera2BasicFragment c2b = new Camera2BasicFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("URI",imageUri);
-                c2b.setArguments(bundle);
-
+                v.getContext().startActivity(intent);
 
             }
         });
