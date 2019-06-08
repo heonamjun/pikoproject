@@ -18,9 +18,9 @@ public class item implements Serializable {
         this.gps = gps;
         this.title = title;
         this.picUrl = picUrl;
-        this.lineUrl = lineUrl;
 
     }
+
     public String getGps() {
         return gps;
     }
