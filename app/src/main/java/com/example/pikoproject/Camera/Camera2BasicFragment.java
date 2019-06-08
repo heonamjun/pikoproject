@@ -112,7 +112,7 @@ public class Camera2BasicFragment extends Fragment
     StickerView stickerView;
 
 
-    Button button,buttonline; //열기닫기 애니메이션
+    Button button,posebutton; //열기닫기 애니메이션
 
     ImageButton button2,button3;
     boolean isPageOpen = false; //열려있는지 확인
@@ -493,27 +493,22 @@ public class Camera2BasicFragment extends Fragment
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-
-//        mPreviewRequestBuilder.set(CaptureRequest.CONTROL_EFFECT_MODE,CaptureRequest.CONTROL_EFFECT_MODE_MONO);
-
-
-        Bundle argument =getArguments();
         final Animation open ;
         final Animation close;
 
 
-        final LinearLayout listb,lista;
+        final LinearLayout listb,poselist;
 
-        listb = (LinearLayout)view.findViewById(R.id.recyclelist); //연예인 포즈 리스트
-        lista =  (LinearLayout)view.findViewById(R.id.recyclelist2);
+        listb = (LinearLayout)view.findViewById(R.id.recyclelist); //라인딴거
+        poselist =  (LinearLayout)view.findViewById(R.id.recyclelist2); // 연예인 포즈
 
 
-        //  mrecyclerview = (RecyclerView) findViewById(R.id.recyclerview);
         mrecyclerview=(RecyclerView)view.findViewById(R.id.recyclerviewtest);
         mrecyclerview.setHasFixedSize(true); // 카드뷰 사이즈 고정
         //mlayoutmanager = new GridLayoutManager(this, 2);// 사이클뷰 디자인부분 2열
         mlayoutmanager = new LinearLayoutManager(mContext , LinearLayout.HORIZONTAL,false); // 가로로 스크롤
         mrecyclerview.setLayoutManager(mlayoutmanager);
+
         Lrecyclerview=(RecyclerView)view.findViewById(R.id.recyclerviewLine);
         Lrecyclerview.setHasFixedSize(true); // 카드뷰 사이즈 고정
         mlayoutmanager = new LinearLayoutManager(mContext , LinearLayout.HORIZONTAL,false); // 가로로 스크롤
@@ -647,13 +642,13 @@ public class Camera2BasicFragment extends Fragment
 
             }
         });
-        buttonline=(Button)view.findViewById(R.id.linebutton);
+        posebutton=(Button)view.findViewById(R.id.posebutton); // 연예인포즈
 
-        buttonline.setOnClickListener(new View.OnClickListener() {
+        posebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                lista.setVisibility(View.VISIBLE);
-                lista.startAnimation(open);
+                poselist.setVisibility(View.VISIBLE);
+                poselist.startAnimation(open);
 
             }
         });
@@ -671,8 +666,8 @@ public class Camera2BasicFragment extends Fragment
             @Override
             public void onClick(View v) {
 
-                lista.startAnimation(close);
-                lista.setVisibility(View.GONE);
+                poselist.startAnimation(close);
+                poselist.setVisibility(View.GONE);
             }
         });
         Button imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
@@ -710,9 +705,9 @@ public class Camera2BasicFragment extends Fragment
     public void onResume() {
         super.onResume();
         startBackgroundThread();
-    //    filterImageUrl = "";
+        filterImageUrl = "";
         lineImageUrl="";
-        String imagepath ="";
+       // Glide.clear(filterImageView);
         stickerView.removeAllStickers();
 
 
@@ -1181,6 +1176,9 @@ public class Camera2BasicFragment extends Fragment
 
     @Override
     public void onClick(View view) {
+
+        SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
+        Button imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
         switch (view.getId()) {
             case R.id.capture:
                 final Animation takepic;
@@ -1223,6 +1221,9 @@ public class Camera2BasicFragment extends Fragment
             case R.id.imageButton5: {
                 Glide.clear(filterImageView);
                 stickerView.removeAllStickers();
+                seekBar.setVisibility(View.GONE);
+                imgbtton.setVisibility(View.GONE);
+
 
                 break;
             }
@@ -1264,6 +1265,8 @@ public class Camera2BasicFragment extends Fragment
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
+        Button imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
         // Check which request we're responding to
         if (requestCode == 100) {
             // Make sure the request was successful
@@ -1272,19 +1275,11 @@ public class Camera2BasicFragment extends Fragment
                     // 선택한 이미지에서 비트맵 생성
                     Uri photoUri = data.getData();
                     imagepath = getRealPathFromURI(photoUri);
-
-
-
-
-
-                  //  InputStream in = getActivity().getContentResolver().openInputStream(data.getData());
-                   // Bitmap img = BitmapFactory.decodeStream(in);
-                   // in.close();
-                    // 이미지 표시
-                  //  ImageView x = getActivity().findViewById(R.id.back);
-
-
-               //     x.setImageBitmap(img);
+                    Glide.with(this).load(imagepath).into(filterImageView);
+                    if(imagepath!=""){
+                        seekBar.setVisibility(View.VISIBLE);
+                        imgbtton.setVisibility(View.VISIBLE);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

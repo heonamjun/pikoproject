@@ -1,9 +1,11 @@
 package com.example.pikoproject.Activity;
+
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.pikoproject.Adapters.PagerAdapter;
 import com.example.pikoproject.R;
@@ -59,6 +61,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+    private long time= 0;
+    @Override
+    public void onBackPressed(){
+        if(System.currentTimeMillis()-time>=2000){
+            time=System.currentTimeMillis();
+            Toast.makeText(getApplicationContext(),"뒤로 버튼을 한번 더 누르면 종료합니다.",Toast.LENGTH_SHORT).show();
+        }else if(System.currentTimeMillis()-time<2000){
+
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
     }
 
 
