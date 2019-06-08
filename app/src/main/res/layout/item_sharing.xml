@@ -137,7 +137,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/contentEiditText2"
+                android:id="@+id/chatcontentText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="2"

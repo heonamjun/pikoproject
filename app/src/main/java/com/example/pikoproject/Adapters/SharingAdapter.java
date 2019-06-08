@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -30,12 +31,17 @@ import com.example.pikoproject.Data.Writeinfo;
 import com.example.pikoproject.OnListener;
 import com.example.pikoproject.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -43,6 +49,8 @@ import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -58,6 +66,7 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
     private Button chatsend;
     private CheckBox heart;
     private FirebaseUser user;
+    private Button chatbtn;
 
 
 
@@ -131,7 +140,7 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
             }
         });
 
-        CardView cardView = holder.cardView;
+        final CardView cardView = holder.cardView;
         TextView titleTextView = cardView.findViewById(R.id.titletextView);
         titleTextView.setText(mDataset.get(position).getTitle());
 
@@ -142,13 +151,49 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
             @Override
             public void onClick(View v) {
                 user= FirebaseAuth.getInstance().getCurrentUser();
-                String username = user.getUid();//사용자 고유 아이디 getId() -> 문서 아이디
+                String path = mDataset.get(position).getId();//사용자 고유 아이디 getId() -> 문서 아이디
                 Writeinfo writeinfo = mDataset.get(position);
+                final int likenumber = 0;
+                Toast.makeText(activity,"  " + path,Toast.LENGTH_LONG).show();
                 FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-                final DocumentReference documentReference = writeinfo == null ?firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(writeinfo.getId()) ;
-                CollectionReference likeRef =  documentReference.collection("likes");
 
-                Toast.makeText(activity,"나와라  " + username,Toast.LENGTH_LONG).show();
+
+                firebaseFirestore.collection("posts").document(path).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task1) {
+                        if(task1.isSuccessful()){
+                            DocumentSnapshot document = task1.getResult();
+                            //   chats = (ArrayList<String>) document.getData().get("chat").toString();
+
+                        }else{
+
+                        }
+                    }
+                });
+
+
+
+                Map<String, Object> likeMap = new HashMap<>();
+                likeMap.put("likecount",likenumber);
+
+                Map<String, Object> data = new HashMap<>();// 보내기
+                data.put("likecount",likeMap);
+                firebaseFirestore.collection("posts").document(path).set(data,SetOptions.merge());
+
+
+
+
+
+
+
+
+
+
+
+/*                final DocumentReference documentReference = writeinfo == null ?firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(writeinfo.getId()) ;
+                CollectionReference likeRef =  documentReference.collection("likes");*/
+
+
 /*                if(writeinfo.isUserliked()){
                     //좋아요 취소
                     DocumentReference userlikeRef = likeRef.document(writeinfo.getLikeid());
@@ -185,6 +230,47 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
        TextView likecountView = cardView.findViewById(R.id.likecountView);
         String likecount = String.valueOf(mDataset.get(position).getLikecount());
         likecountView.setText(likecount);
+
+        chatbtn = cardView.findViewById(R.id.chatsend);
+        chatbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String chatcontents = ((TextView)cardView.findViewById(R.id.chatcontentText)).getText().toString();
+               if(chatcontents.length() > 0){
+                   user= FirebaseAuth.getInstance().getCurrentUser();
+                   String path = mDataset.get(position).getId();
+                   Toast.makeText(activity,"  " + path,Toast.LENGTH_LONG).show();
+
+
+                   final ArrayList<String> chats = new ArrayList<>();
+                   chats.add("test1");
+
+                   FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
+                    firebaseFirestore.collection("posts").document(path).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task1) {
+                            if(task1.isSuccessful()){
+                                DocumentSnapshot document = task1.getResult();
+                              //   chats = (ArrayList<String>) document.getData().get("chat").toString();
+
+                            }else{
+
+                            }
+                        }
+                    });
+
+                       chats.add(chatcontents);
+                   Map<String, Object> data = new HashMap<>();// 보내기
+                   data.put("chat",(ArrayList)chats);
+                  firebaseFirestore.collection("posts").document(path).set(data,SetOptions.merge());
+
+
+
+               }
+
+            }
+        });
 
         LinearLayout contentsLayout = cardView.findViewById(R.id.contentLayout);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -194,7 +194,6 @@ public class shareFragment extends Fragment {
                         if (task.isSuccessful()) {
                             postList.clear();
                             for (final QueryDocumentSnapshot document : task.getResult()) {
-
 /*                              postList.add(new Writeinfo(
                                         document.getData().get("title").toString(),
                                         (ArrayList<String>)document.getData().get("contents"),
@@ -207,16 +206,16 @@ public class shareFragment extends Fragment {
                                         (ArrayList<String>)document.getData().get("contents"),
                                         document.getData().get("publicsher").toString(),
                                         new Date(document.getDate("createdAt").getTime()),
-                                        collectionReference.getId()
+                                        document.getId(),
+                                        document.getData().get("email").toString()
                                 );
 
-                                writeinfo.setEmail(document.getData().get("email").toString());
+//                                writeinfo.setEmail(document.getData().get("email").toString());
 
 
-                               DocumentReference postRef = document.getReference();
+/*                               DocumentReference postRef = document.getReference();
                                 final CollectionReference likeRef = postRef.collection("likes");
-                                likeRef.get()
-                                      .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                likeRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                             @Override
                                             public void onComplete(@NonNull Task<QuerySnapshot> task1) {
                                                 if(task1.isSuccessful()){
@@ -227,7 +226,7 @@ public class shareFragment extends Fragment {
                                                 }
                                             }
                                         });
-                                writeinfo.setLikecount(likesCount);
+                                writeinfo.setLikecount(likesCount);*/
                                 postList.add(writeinfo);
                             }
                            sharingAdapter.notifyDataSetChanged();// 삭제시 리사이클 초기화

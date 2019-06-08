@@ -22,6 +22,7 @@ public class Writeinfo implements Serializable {
 
 
 
+
     public Writeinfo(String title, ArrayList<String> contents, String publicsher,Date createdAt,String id,String email){
         this.title = title;
         this.contents = contents;
