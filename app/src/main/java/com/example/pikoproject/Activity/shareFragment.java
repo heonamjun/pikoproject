@@ -12,6 +12,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -89,7 +90,15 @@ public class shareFragment extends Fragment {
 
         }
 
-
+        Button loginout= (Button) view.findViewById(R.id.Loginout2);
+        loginout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(getActivity() , LoginActivity.class);
+                startActivity(intent);
+            }
+        });
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
@@ -277,6 +286,7 @@ public class shareFragment extends Fragment {
                     });
         }
     }
+
 
 
     public void mstartActivity(Class c){

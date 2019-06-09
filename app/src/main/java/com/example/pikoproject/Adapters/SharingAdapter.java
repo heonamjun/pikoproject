@@ -157,7 +157,7 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                 Writeinfo writeinfo = mDataset.get(position);
                 String username = user.getUid();
                 final int likenumber = 0;
-                Toast.makeText(activity, "  " + path, Toast.LENGTH_LONG).show();
+               // Toast.makeText(activity, "  " + path, Toast.LENGTH_LONG).show();
                 FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
                 final DocumentReference documentReference = writeinfo == null ? firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(writeinfo.getId());
                 CollectionReference likeRef = documentReference.collection("likes");
@@ -178,9 +178,9 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                 //좋아요 추가
                 Map<String, Object> likeMap = new HashMap<>();
                 likeMap.put("publicsher", username);
-                likeMap.put("userliked", true);
+               // likeMap.put("userliked", true);
                 likeMap.put("createAt", new Date());
-                likeMap.put("id", documentReference.getId());
+                likeMap.put("id", likeRef.document().getId());
 
                 likeRef.add(likeMap)
                         .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
