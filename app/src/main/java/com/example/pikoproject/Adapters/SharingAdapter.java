@@ -130,7 +130,6 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                     e.printStackTrace();
                 }
                 Intent intent = new Intent(v.getContext(), CameraActivity.class);
-
                 v.getContext().startActivity(intent);
 
             }

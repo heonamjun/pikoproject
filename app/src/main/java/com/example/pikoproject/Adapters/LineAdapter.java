@@ -28,7 +28,7 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.VIewHolder>  {
 
         public VIewHolder(View view) {
             super(view);
-            mimageview = (ImageView) view.findViewById(R.id.drama_image);
+            mimageview = (ImageView) view.findViewById(R.id.drama_image2);
         }
     }
 
@@ -42,7 +42,7 @@ public class LineAdapter extends RecyclerView.Adapter<LineAdapter.VIewHolder>  {
     public LineAdapter.VIewHolder onCreateViewHolder(ViewGroup parent, int viewType){ // 화면생성
         //context 와 viewgroup 생성자로 전달 받아 layoutinflater.from을 토행 view를 생성
         //layoutinflater를 이용하여 전 단계에서 만들었던 cardview.xml를 inflate 시킴 . 혁준
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview, parent , false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cardview2, parent , false);
         VIewHolder viewholder = new VIewHolder(view);
         return viewholder;
     }

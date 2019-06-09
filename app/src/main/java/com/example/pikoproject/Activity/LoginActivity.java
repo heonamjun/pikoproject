@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pikoproject.R;
@@ -40,14 +41,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private EditText edittext_email;
     private EditText edittext_password;
     private Button Login_btn;
-    private Button createuser_btn;
+    private TextView createuser_btn;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.loginexam);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -70,9 +71,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             }
         });
 
-          edittext_email = (EditText)findViewById(R.id.editText_email);
-          edittext_password = (EditText)findViewById(R.id.editText_password);
-          createuser_btn = (Button) findViewById(R.id.CREATEUSER);
+          edittext_email = (EditText)findViewById(R.id.editText1);
+          edittext_password = (EditText)findViewById(R.id.editText2);
+          createuser_btn = (TextView) findViewById(R.id.CREATEUSER);
           Login_btn = (Button) findViewById(R.id.EmailLogin);
 
           createuser_btn.setOnClickListener(new View.OnClickListener() {
@@ -103,8 +104,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
 
     private void Login() {
-        String email = ((EditText) findViewById(R.id.editText_email)).getText().toString();
-        String password = ((EditText) findViewById(R.id.editText_password)).getText().toString();
+        String email = ((EditText) findViewById(R.id.editText1)).getText().toString();
+        String password = ((EditText) findViewById(R.id.editText2)).getText().toString();
 
         if(email.length() > 0 && password.length() > 0  ) {
             final RelativeLayout loaderLayout = findViewById(R.id.loaderLayout);

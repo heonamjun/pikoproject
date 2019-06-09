@@ -1,7 +1,6 @@
 package com.example.pikoproject.Activity;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -16,7 +15,6 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera2);
         Camera2BasicFragment camera2BasicFragment = new Camera2BasicFragment();
-        Intent intent = getIntent();
 
 
         if (null == savedInstanceState) {

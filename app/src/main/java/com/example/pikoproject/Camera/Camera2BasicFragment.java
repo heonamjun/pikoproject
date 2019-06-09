@@ -48,6 +48,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -55,7 +56,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -112,7 +112,8 @@ public class Camera2BasicFragment extends Fragment
     StickerView stickerView;
 
 
-    Button button,posebutton; //열기닫기 애니메이션
+
+    ImageButton button,posebutton; //열기닫기 애니메이션
 
     ImageButton button2,button3;
     boolean isPageOpen = false; //열려있는지 확인
@@ -483,7 +484,11 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         mContext = container.getContext();
+
+
 
 
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
@@ -493,11 +498,50 @@ public class Camera2BasicFragment extends Fragment
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
+
         final Animation open ;
         final Animation close;
+        getView().setFocusableInTouchMode(true);
 
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                        //go to previous fragemnt
+                        //perform your fragment transaction here
+                        //pass data as arguments
+                        final Animation takepic;
+                        takepic=AnimationUtils.loadAnimation(mContext,R.anim.alpha);
+                        takePicture();
+                        highlight = ((Activity) mContext).findViewById(R.id.highlight);
+                        highlight.setVisibility(View.VISIBLE);
+                        highlight.startAnimation(takepic);
+                        takepic.setAnimationListener(new Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(Animation animation) {
+                            }
+
+                            @Override
+                            public void onAnimationEnd(Animation animation) {
+                                highlight.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animation animation) {
+
+                            }
+                        });
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
 
         final LinearLayout listb,poselist;
+
 
         listb = (LinearLayout)view.findViewById(R.id.recyclelist); //라인딴거
         poselist =  (LinearLayout)view.findViewById(R.id.recyclelist2); // 연예인 포즈
@@ -553,6 +597,7 @@ public class Camera2BasicFragment extends Fragment
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
+
         });
         // 참조 데이터 기준으로 콜벡리스너
         madapter = new adapter(mydataset,this);
@@ -597,20 +642,6 @@ public class Camera2BasicFragment extends Fragment
         });
         /* 투명도조절을위해서 seekbar 위젯을 사용*/
 
-        Glide.with(this).load(lineImageUrl).listener(new RequestListener<String, GlideDrawable>() {
-            @Override
-            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                return false;
-            }
-
-            @Override
-            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                stickerView.addSticker(new DrawableSticker(resource));
-                stickerView.setConstrained(true);
-
-                return false;
-            }
-        }).into(100,100);
 
         Glide.with(this).load(filterImageUrl).into(filterImageView);
 
@@ -627,7 +658,7 @@ public class Camera2BasicFragment extends Fragment
 
 
 
-        button = (Button) view.findViewById(R.id.listbutton);
+        button = (ImageButton) view.findViewById(R.id.listbutton);
         button.setOnClickListener(new View.OnClickListener() {
             // 열기 / 닫기 의 경우로 보여주려고 할때.
             @Override
@@ -642,7 +673,7 @@ public class Camera2BasicFragment extends Fragment
 
             }
         });
-        posebutton=(Button)view.findViewById(R.id.posebutton); // 연예인포즈
+        posebutton=(ImageButton)view.findViewById(R.id.posebutton); // 연예인포즈
 
         posebutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -670,12 +701,13 @@ public class Camera2BasicFragment extends Fragment
                 poselist.setVisibility(View.GONE);
             }
         });
-        Button imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
-
-        if(filterImageUrl!="") {  // 사진 한번더 클릭했을때 이미지뷰 초기화
+        ImageButton imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
+        ImageButton imgbtton2=((Activity)mContext).findViewById(R.id.imageButton5);
+        if(filterImageUrl!="" || lineImageUrl!="") {  // 사진 한번더 클릭했을때 이미지뷰 초기화
 
             seekBar.setVisibility(View.VISIBLE);
             imgbtton.setVisibility(View.VISIBLE);
+            imgbtton2.setVisibility(View.VISIBLE);
 
         }
 
@@ -707,9 +739,7 @@ public class Camera2BasicFragment extends Fragment
         startBackgroundThread();
         filterImageUrl = "";
         lineImageUrl="";
-       // Glide.clear(filterImageView);
         stickerView.removeAllStickers();
-
 
         // When the screen is turned off and turned back on, the SurfaceTexture is already
         // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
@@ -1177,8 +1207,11 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onClick(View view) {
 
+
         SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
-        Button imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
+        ImageButton imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
+        ImageButton imgbtton2 = ((Activity)mContext).findViewById(R.id.imageButton5);
+
         switch (view.getId()) {
             case R.id.capture:
                 final Animation takepic;
@@ -1223,7 +1256,7 @@ public class Camera2BasicFragment extends Fragment
                 stickerView.removeAllStickers();
                 seekBar.setVisibility(View.GONE);
                 imgbtton.setVisibility(View.GONE);
-
+                imgbtton2.setVisibility(View.GONE);
 
                 break;
             }
@@ -1266,7 +1299,9 @@ public class Camera2BasicFragment extends Fragment
         super.onActivityResult(requestCode, resultCode, data);
 
         SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
-        Button imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
+        ImageButton imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
+        ImageButton imgbtton2 = ((Activity)mContext).findViewById(R.id.imageButton5);
+
         // Check which request we're responding to
         if (requestCode == 100) {
             // Make sure the request was successful
@@ -1279,6 +1314,8 @@ public class Camera2BasicFragment extends Fragment
                     if(imagepath!=""){
                         seekBar.setVisibility(View.VISIBLE);
                         imgbtton.setVisibility(View.VISIBLE);
+                        imgbtton2.setVisibility(View.VISIBLE);
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1465,8 +1502,10 @@ public class Camera2BasicFragment extends Fragment
     public void onClicked (String value){
                 // value this data you receive when increment() / decrement() called
         SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
-        Button imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
-      //  setGlideView(filterImageUrl,filterImageView);
+        ImageButton imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
+        ImageButton imgbtton2 = ((Activity)mContext).findViewById(R.id.imageButton5);
+
+        //  setGlideView(filterImageUrl,filterImageView);
         if(filterImageUrl==value) {  // 사진 한번더 클릭했을때 이미지뷰 초기화
             Glide.clear(filterImageView);
             stickerView.removeAllStickers();
@@ -1474,6 +1513,7 @@ public class Camera2BasicFragment extends Fragment
             filterImageUrl="";
             seekBar.setVisibility(View.GONE);
             imgbtton.setVisibility(View.GONE);
+            imgbtton2.setVisibility(View.GONE);
 
         }
         else{
@@ -1483,7 +1523,7 @@ public class Camera2BasicFragment extends Fragment
             Glide.with(this).load(filterImageUrl).into(filterImageView);
             seekBar.setVisibility(View.VISIBLE);
             imgbtton.setVisibility(View.VISIBLE);
-
+            imgbtton2.setVisibility(View.VISIBLE);
         }
 
     }
@@ -1491,7 +1531,8 @@ public class Camera2BasicFragment extends Fragment
     public void onClicked2 (String value){
         // value this data you receive when increment() / decrement() called
         SeekBar seekBar = ((Activity)mContext).findViewById(R.id.seekBar);
-        Button imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
+        ImageButton imgbtton = ((Activity)mContext).findViewById(R.id.imageButton3);
+        ImageButton imgbtton2 = ((Activity)mContext).findViewById(R.id.imageButton5);
         //  setGlideView(filterImageUrl,filterImageView);
         if(lineImageUrl==value) {  // 사진 한번더 클릭했을때 이미지뷰 초기화
 
@@ -1500,11 +1541,14 @@ public class Camera2BasicFragment extends Fragment
             lineImageUrl="";
             seekBar.setVisibility(View.GONE);
             imgbtton.setVisibility(View.GONE);
+            imgbtton2.setVisibility(View.GONE);
 
         }
         else{
             lineImageUrl= value;
             Glide.clear(filterImageView);
+            stickerView.removeAllStickers();
+
             Glide.with(this).load(lineImageUrl).listener(new RequestListener<String, GlideDrawable>() {
                 @Override
                 public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
@@ -1515,12 +1559,12 @@ public class Camera2BasicFragment extends Fragment
                 public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                     stickerView.addSticker(new DrawableSticker(resource));
                     stickerView.setConstrained(true);
-
                     return false;
                 }
             }).into(200,200);
 
             seekBar.setVisibility(View.VISIBLE);
+            imgbtton2.setVisibility(View.VISIBLE);
             imgbtton.setVisibility(View.VISIBLE);
 
         }
@@ -1531,7 +1575,8 @@ public class Camera2BasicFragment extends Fragment
         Glide.with(this).load( path ).signature(new StringSignature(UUID.randomUUID().toString())).into(iv);
     }
 
-    public Messenger getMessenger(){return messenger;}
+    public Messenger getMessenger(){
+        return messenger;}
     private Messenger messenger = new Messenger(new Handler(){
         @Override
         public void handleMessage(Message msg){

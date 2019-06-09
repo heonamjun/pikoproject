@@ -21,7 +21,6 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 Camera2BasicFragment tab2 = new Camera2BasicFragment();
-
                 return tab2;
             case 1:
                 shareFragment tab1 = new shareFragment();
