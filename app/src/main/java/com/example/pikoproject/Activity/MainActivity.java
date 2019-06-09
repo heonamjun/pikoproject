@@ -1,14 +1,17 @@
 package com.example.pikoproject.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.pikoproject.Adapters.PagerAdapter;
 import com.example.pikoproject.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
@@ -35,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("첫번째"));
-        tabLayout.addTab(tabLayout.newTab().setText("두번째"));
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tabLayout.addTab(tabLayout.newTab().setText("카메라"));
+        tabLayout.addTab(tabLayout.newTab().setText("커뮤니티"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_CENTER);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         final PagerAdapter adapter = new PagerAdapter
@@ -58,6 +61,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
 
+            }
+        });
+        loginout_btn = (Button) findViewById(R.id.Loginout);
+        loginout_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(MainActivity.this , LoginActivity.class);
+                startActivity(intent);
             }
         });
 

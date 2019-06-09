@@ -4,18 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:alpha="0.9"
-    android:background="@drawable/background">
+    >
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="380dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="80dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:src="@drawable/pose"
+        android:src="@drawable/logo"
         android:visibility="visible" />
 
     <EditText
@@ -24,7 +20,7 @@
         android:layout_height="50dp"
         android:layout_below="@+id/imageView"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/rounded_edittext"
         android:cursorVisible="true"
@@ -71,17 +67,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/editText2"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="24dp"
         android:layout_marginTop="7dp"
-        android:layout_marginRight="20dp"
-        android:background="@drawable/rounded_button1"
+        android:layout_marginRight="24dp"
+        android:background="@color/colorPrimary"
         android:fontFamily="sans-serif"
         android:text="LOGIN"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="20sp"
-        android:textStyle="normal|bold"
 
-        />
+        android:textStyle="normal|bold" />
 
 
     <com.google.android.gms.common.SignInButton
@@ -92,8 +87,6 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="7dp"
         android:layout_marginRight="20dp"
-        android:background="@drawable/rounded_button2"
-        android:text="LOGIN AS GOOGLE"
         android:textColor="#FFFFFF"
         android:textSize="20sp" />
 
@@ -117,6 +110,6 @@
         layout="@layout/view_loader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </RelativeLayout>

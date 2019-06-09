@@ -151,7 +151,7 @@
                             android:layout_gravity="bottom|center"
                             android:layout_marginLeft="10dp"
                             android:layout_marginRight="5dp"
-                            android:layout_marginBottom="45dp"
+                            android:layout_marginBottom="55dp"
                             android:background="@android:color/transparent"
                             android:scaleType="fitCenter"
                             android:src="@drawable/users" />
@@ -164,7 +164,7 @@
 
                             android:layout_gravity="bottom|center"
                             android:layout_marginLeft="20dp"
-                            android:layout_marginBottom="45dp"
+                            android:layout_marginBottom="55dp"
                             android:background="@android:color/transparent"
                             android:scaleType="fitCenter"
                             android:src="@drawable/poses" />
@@ -184,7 +184,7 @@
                             android:layout_width="90dp"
                             android:layout_height="100dp"
                             android:layout_gravity="bottom|center"
-                            android:layout_marginBottom="15dp"
+                            android:layout_marginBottom="30dp"
                             android:layout_weight="1"
                             android:background="@android:color/transparent"
                             android:cropToPadding="false"
@@ -209,7 +209,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:layout_gravity="bottom|center"
-                            android:layout_marginBottom="45dp"
+                            android:layout_marginBottom="55dp"
                             android:background="@android:color/transparent"
 
                             android:scaleType="fitCenter"
