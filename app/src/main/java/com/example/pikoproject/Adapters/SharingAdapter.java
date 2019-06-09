@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -35,12 +36,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -57,13 +61,14 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
     private FirebaseUser user;
     private Context mcontext;
     private Button chatbtn;
+    public static String userliked;
 
 
+    static class SharingViewHolder extends RecyclerView.ViewHolder {
 
-     static class SharingViewHolder extends RecyclerView.ViewHolder {
+        CardView cardView;
 
-         CardView cardView;
-         SharingViewHolder(CardView v) {
+        SharingViewHolder(CardView v) {
             super(v);
             cardView = v;
         }
@@ -71,18 +76,20 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
 
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public SharingAdapter(ArrayList<Writeinfo> myDataset,ArrayList<Likeinfo> lDateset ) {
+    public SharingAdapter(ArrayList<Writeinfo> myDataset, ArrayList<Likeinfo> lDateset) {
         this.mDataset = myDataset;
         this.lDateset = lDateset;
 
-    } public SharingAdapter(Activity activity , ArrayList<Writeinfo> myDataset, ArrayList<Likeinfo> lDateset) {
+    }
+
+    public SharingAdapter(Activity activity, ArrayList<Writeinfo> myDataset, ArrayList<Likeinfo> lDateset) {
         this.mDataset = myDataset;
         this.lDateset = lDateset;
         this.activity = activity;
 
     }
 
-    public void setOnListener(OnListener onListener){
+    public void setOnListener(OnListener onListener) {
         this.onListener = onListener;
     }
 
@@ -113,15 +120,15 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
             public void onClick(View v) {
                 Writeinfo name = mDataset.get(position);
                 ArrayList<String> contentList = name.getContents();
-                for(int i = 0 ; i < contentList.size() ; i ++ ){
+                for (int i = 0; i < contentList.size(); i++) {
                     String content = contentList.get(i);
-                    if(content.contains("http")){
+                    if (content.contains("http")) {
                         imageUri = content;
 
                     }
                 }
                 Camera2BasicFragment c2r = new Camera2BasicFragment();
-                Messenger messenger =c2r.getMessenger();
+                Messenger messenger = c2r.getMessenger();
                 Message msg = Message.obtain();
                 msg.obj = imageUri; // 사진 주소 보내기
                 try {
@@ -130,6 +137,7 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                     e.printStackTrace();
                 }
                 Intent intent = new Intent(v.getContext(), CameraActivity.class);
+
                 v.getContext().startActivity(intent);
 
             }
@@ -140,57 +148,55 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
         titleTextView.setText(mDataset.get(position).getTitle());
 
 
-
         heart = cardView.findViewById(R.id.heart);
         heart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                user= FirebaseAuth.getInstance().getCurrentUser();
+                user = FirebaseAuth.getInstance().getCurrentUser();
                 String path = mDataset.get(position).getId();//사용자 고유 아이디 getId() -> 문서 아이디
                 Writeinfo writeinfo = mDataset.get(position);
+                String username = user.getUid();
                 final int likenumber = 0;
-                Toast.makeText(activity,"  " + path,Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, "  " + path, Toast.LENGTH_LONG).show();
                 FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-
+                final DocumentReference documentReference = writeinfo == null ? firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(writeinfo.getId());
+                CollectionReference likeRef = documentReference.collection("likes");
 
                 firebaseFirestore.collection("posts").document(path).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task1) {
-                        if(task1.isSuccessful()){
+                        if (task1.isSuccessful()) {
                             DocumentSnapshot document = task1.getResult();
-                            //   chats = (ArrayList<String>) document.getData().get("chat").toString();
-
-                        }else{
+                            //     userliked =  document.getData().get("userliked").toString();
+                        } else {
 
                         }
                     }
                 });
 
 
-
+                //좋아요 추가
                 Map<String, Object> likeMap = new HashMap<>();
-                likeMap.put("likecount",likenumber);
+                likeMap.put("publicsher", username);
+                likeMap.put("userliked", true);
+                likeMap.put("createAt", new Date());
+                likeMap.put("id", documentReference.getId());
 
-                Map<String, Object> data = new HashMap<>();// 보내기
-                data.put("likecount",likeMap);
-                firebaseFirestore.collection("posts").document(path).set(data, SetOptions.merge());
-
-
-
-
-
-
-
-
-
+                likeRef.add(likeMap)
+                        .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                Toast.makeText(activity, "좋아요", Toast.LENGTH_LONG).show();
+                            }
+                        });
 
 
 /*                final DocumentReference documentReference = writeinfo == null ?firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(writeinfo.getId()) ;
                 CollectionReference likeRef =  documentReference.collection("likes");*/
 
 
-/*                if(writeinfo.isUserliked()){
-                    //좋아요 취소
+
+  /*                  //좋아요 취소
                     DocumentReference userlikeRef = likeRef.document(writeinfo.getLikeid());
                     userlikeRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -198,22 +204,9 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
 
                     Toast.makeText(activity,"좋아요 취소",Toast.LENGTH_LONG).show();
                         }
-                    });
+                    });*/
 
-                }else{
-                    //좋아요 추가
-                    Map<String, Object> likeMap = new HashMap<>();
-                    likeMap.put("publicsher",username);
-                    likeMap.put("createAt",new Date());
 
-                    likeRef.add(likeMap)
-                            .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentReference> task) {
-                                    Toast.makeText(activity,"좋아요",Toast.LENGTH_LONG).show();
-                                }
-                            });
-                }*/
             }
         });
         TextView createAt = cardView.findViewById(R.id.createAt);
@@ -222,7 +215,7 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
         TextView userEmail = cardView.findViewById(R.id.emailView);
         userEmail.setText(mDataset.get(position).getEmail());
 
-       TextView likecountView = cardView.findViewById(R.id.likecountView);
+        TextView likecountView = cardView.findViewById(R.id.likecountView);
         String likecount = String.valueOf(mDataset.get(position).getLikecount());
         likecountView.setText(likecount);
 
@@ -230,54 +223,53 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
         chatbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String chatcontents = ((TextView)cardView.findViewById(R.id.chatcontentText)).getText().toString();
-               if(chatcontents.length() > 0){
-                   user= FirebaseAuth.getInstance().getCurrentUser();
-                   String path = mDataset.get(position).getId();
-                   Toast.makeText(activity,"  " + path,Toast.LENGTH_LONG).show();
+                final String chatcontents = ((TextView) cardView.findViewById(R.id.chatcontentText)).getText().toString();
+                if (chatcontents.length() > 0) {
+                    user = FirebaseAuth.getInstance().getCurrentUser();
+                    String path = mDataset.get(position).getId();
+                    Toast.makeText(activity, "  " + path, Toast.LENGTH_LONG).show();
 
 
-                   final ArrayList<String> chats = new ArrayList<>();
-                   chats.add("test1");
+                    final ArrayList<String> chats = new ArrayList<>();
+                    chats.add("test1");
 
-                   FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+                    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
                     firebaseFirestore.collection("posts").document(path).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task1) {
-                            if(task1.isSuccessful()){
+                            if (task1.isSuccessful()) {
                                 DocumentSnapshot document = task1.getResult();
-                              //   chats = (ArrayList<String>) document.getData().get("chat").toString();
+                                //   chats = (ArrayList<String>) document.getData().get("chat").toString();
 
-                            }else{
+                            } else {
 
                             }
                         }
                     });
 
-                       chats.add(chatcontents);
-                   Map<String, Object> data = new HashMap<>();// 보내기
-                   data.put("chat",(ArrayList)chats);
-                  firebaseFirestore.collection("posts").document(path).set(data,SetOptions.merge());
+                    chats.add(chatcontents);
+                    Map<String, Object> data = new HashMap<>();// 보내기
+                    data.put("chat", (ArrayList) chats);
+                    firebaseFirestore.collection("posts").document(path).set(data, SetOptions.merge());
 
 
-
-               }
+                }
 
             }
         });
 
         LinearLayout contentsLayout = cardView.findViewById(R.id.contentLayout);
-        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         ArrayList<String> contentsList = mDataset.get(position).getContents();
 
 
-        if(contentsLayout.getTag() == null || !contentsLayout.getTag().equals(contentsList)){
+        if (contentsLayout.getTag() == null || !contentsLayout.getTag().equals(contentsList)) {
             contentsLayout.setTag(contentsList);
             contentsLayout.removeAllViews();
             final int MORE_INDEX = 2;
             for (int i = 0; i < contentsList.size(); i++) {
-                if(i == MORE_INDEX){
+                if (i == MORE_INDEX) {
                     TextView textView = new TextView(activity);
                     textView.setLayoutParams(layoutParams);
                     textView.setText("더보기...");
@@ -292,18 +284,18 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                     imageView.setAdjustViewBounds(true);
                     imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                     contentsLayout.addView(imageView);
-                    Glide.with(activity).load(contents).override(250,250).thumbnail(0.1f).into(imageView);
+                    Glide.with(activity).load(contents).override(250, 250).thumbnail(0.1f).into(imageView);
                     break;
                 } else {
                     TextView textView = new TextView(activity);
                     textView.setLayoutParams(layoutParams);
                     textView.setText(contents);
-                    textView.setTextColor(Color.rgb(0,0,0));
+                    textView.setTextColor(Color.rgb(0, 0, 0));
                     contentsLayout.addView(textView);
                 }
-              }
-           }
-       }
+            }
+        }
+    }
 
 
     @Override
@@ -312,22 +304,21 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
     }
 
 
-
-    private void showPopup(View v ,final int position) {
+    private void showPopup(View v, final int position) {
         PopupMenu popup = new PopupMenu(activity, v);
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 String id = mDataset.get(position).getId();
-                switch(menuItem.getItemId()){
-                    case R.id.modify :
+                switch (menuItem.getItemId()) {
+                    case R.id.modify:
                         onListener.onModify(position);
-                       return true;
-                    case R.id.delete :
+                        return true;
+                    case R.id.delete:
                         onListener.onDelete(position);
                         return true;
-                        default:
-                            return false;
+                    default:
+                        return false;
                 }
             }
         });
@@ -335,11 +326,5 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
         inflater.inflate(R.menu.post, popup.getMenu());
         popup.show();
     }
-
-
-
-
-
 }
-
 

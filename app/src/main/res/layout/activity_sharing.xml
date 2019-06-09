@@ -4,11 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/SharingrecycleView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="15">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/SharingrecycleView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="14">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_marginBottom="0dp"
+            android:layout_weight="1"
+            app:srcCompat="@android:color/background_light" />
+
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
@@ -16,10 +34,11 @@
         android:layout_height="80dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="9dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginBottom="6dp"
         android:clickable="true"
         android:src="@drawable/ic_add_black_24dp"
+        android:tint="@color/colorAccent"
         app:backgroundTint="@color/colorPrimaryDark" />
 
     <include

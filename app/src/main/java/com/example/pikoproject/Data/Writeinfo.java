@@ -12,8 +12,8 @@ public class Writeinfo implements Serializable {
     private String publicsher;
     private Date createdAt;
     private String id;
-    private int likecount;
-    private boolean userliked;
+    private String likecount;
+    private String userliked;
     private String likeid ;
     private String email;
     private ArrayList<String> chat;
@@ -21,9 +21,17 @@ public class Writeinfo implements Serializable {
     public  Writeinfo(){}
 
 
+    public Writeinfo(String title, ArrayList<String> contents, String publicsher,Date createdAt,String id, String email, String likecount){
+        this.title = title;
+        this.contents = contents;
+        this.publicsher = publicsher;
+        this.createdAt = createdAt;
+        this.id = id;
+        this.email = email;
+        this.likecount = likecount;
+    }
 
-
-    public Writeinfo(String title, ArrayList<String> contents, String publicsher,Date createdAt,String id,String email){
+    public Writeinfo(String title, ArrayList<String> contents, String publicsher,Date createdAt,String id, String email){
         this.title = title;
         this.contents = contents;
         this.publicsher = publicsher;
@@ -113,21 +121,7 @@ public class Writeinfo implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public int getLikecount() {
-        return likecount;
-    }
 
-    public void setLikecount(int likecount) {
-        this.likecount = likecount;
-    }
-
-    public boolean isUserliked() {
-        return userliked;
-    }
-
-    public void setUserliked(boolean userliked) {
-        this.userliked = userliked;
-    }
 
     public String getLikeid() {
         return likeid;
@@ -143,5 +137,21 @@ public class Writeinfo implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getLikecount() {
+        return likecount;
+    }
+
+    public void setLikecount(String likecount) {
+        this.likecount = likecount;
+    }
+
+    public String getUserliked() {
+        return userliked;
+    }
+
+    public void setUserliked(String userliked) {
+        this.userliked = userliked;
     }
 }
