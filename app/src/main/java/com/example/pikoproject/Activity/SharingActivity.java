@@ -142,6 +142,7 @@ public class SharingActivity extends AppCompatActivity {
                                         document.getData().get("publicsher").toString(),
                                         new Date(document.getDate("createdAt").getTime())
                                         ,document.getId()));
+
                             }
                             sharingAdapter.notifyDataSetChanged();// 삭제시 리사이클 초기화
                         } else {

@@ -35,12 +35,15 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -59,7 +62,7 @@ public class shareFragment extends Fragment {
     protected String uesrid;
     protected String uesremail;
     static int likesCount;
-    Likeinfo likeinfo = new Likeinfo(likesCount);
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,6 +107,12 @@ public class shareFragment extends Fragment {
 
 
     @Override
+    public void onStart() {
+        super.onStart();
+        postUpdate();
+    }
+
+    @Override
     public void onResume(){
         super.onResume();
         postUpdate();
@@ -145,12 +154,12 @@ public class shareFragment extends Fragment {
                         public void onSuccess(Void aVoid) {
                             successCount--;
                             storeUploader(id);
-                           // loaderLayout.setVisibility(View.GONE);
+                            // loaderLayout.setVisibility(View.GONE);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                           // loaderLayout.setVisibility(View.GONE);
+                            // loaderLayout.setVisibility(View.GONE);
                             //Toast.makeText(SharingActivity.this, " 문제가 발생하였습니다 ", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -167,7 +176,7 @@ public class shareFragment extends Fragment {
         }
     };
 
-        View.OnClickListener onClickListener = new View.OnClickListener() {
+    View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()){
@@ -187,7 +196,7 @@ public class shareFragment extends Fragment {
     private void postUpdate(){
         firebaseFirestore = FirebaseFirestore.getInstance();
         final CollectionReference collectionReference = firebaseFirestore.collection("posts");
-      collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get() // query .....  사진 순서대로 나오기
+        collectionReference.orderBy("createdAt", Query.Direction.DESCENDING).get() // query .....  사진 순서대로 나오기
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -201,35 +210,44 @@ public class shareFragment extends Fragment {
                                         new Date(document.getDate("createdAt").getTime()),
                                         document.getId()));*/
 
+                                DocumentReference postRef = document.getReference();
+                                final CollectionReference likeRef = postRef.collection("likes");
+                                likeRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                                        if(task1.isSuccessful()){
+                                            //likes 콜렉션을 받아오는데 성공
+                                            QuerySnapshot likesresult = task1.getResult();
+                                            likesCount = likesresult.size();
+                                        }
+                                    }
+                                });
+
+
+                                Map<String, Object> data = new HashMap<>();// 보내기
+                                data.put("likecount",likesCount);
+                                firebaseFirestore.collection("posts").document(document.getId()).set(data, SetOptions.merge());
+
+
+
+                                // likesCount += 1 ;
+                                String likecount = Integer.toString(likesCount);
+
                                 final Writeinfo writeinfo = new Writeinfo(
                                         document.getData().get("title").toString(),
                                         (ArrayList<String>)document.getData().get("contents"),
                                         document.getData().get("publicsher").toString(),
                                         new Date(document.getDate("createdAt").getTime()),
                                         document.getId(),
-                                        document.getData().get("email").toString()
+                                        document.getData().get("email").toString(),
+                                        likecount
                                 );
 
-//                                writeinfo.setEmail(document.getData().get("email").toString());
 
 
-/*                               DocumentReference postRef = document.getReference();
-                                final CollectionReference likeRef = postRef.collection("likes");
-                                likeRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
-                                                if(task1.isSuccessful()){
-                                                    //likes 콜렉션을 받아오는데 성공
-                                                    QuerySnapshot likesresult = task1.getResult();
-                                                    likesCount = likesresult.size();
-
-                                                }
-                                            }
-                                        });
-                                writeinfo.setLikecount(likesCount);*/
                                 postList.add(writeinfo);
                             }
-                           sharingAdapter.notifyDataSetChanged();// 삭제시 리사이클 초기화
+                            sharingAdapter.notifyDataSetChanged();// 삭제시 리사이클 초기화
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -244,7 +262,7 @@ public class shareFragment extends Fragment {
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                           Toast.makeText(getActivity(),"삭제하였습니다.",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(),"삭제하였습니다.",Toast.LENGTH_SHORT).show();
                             //Log.d(TAG, "DocumentSnapshot successfully deleted!");
 
                             postUpdate();
@@ -253,7 +271,7 @@ public class shareFragment extends Fragment {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                      //      Toast.makeText(SharingActivity.this,"삭제하지 못 하였습니다.",Toast.LENGTH_SHORT).show();
+                            //      Toast.makeText(SharingActivity.this,"삭제하지 못 하였습니다.",Toast.LENGTH_SHORT).show();
                             // Log.w(TAG, "Error deleting document", e);
                         }
                     });
