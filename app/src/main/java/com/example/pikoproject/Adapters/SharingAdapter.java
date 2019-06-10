@@ -65,7 +65,6 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
     public static String userliked;
 
 
-
     static class SharingViewHolder extends RecyclerView.ViewHolder {
 
         CardView cardView;
@@ -161,8 +160,7 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                 final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
 
-
-                if (((CheckBox)v).isChecked()) {
+                if (((CheckBox) v).isChecked()) {
                     DocumentReference docRef = firebaseFirestore.collection("posts").document(mDataset.get(position).getId().toString());
                     docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
@@ -173,12 +171,13 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                                     //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                                     String count = document.getData().get("likecount").toString();
                                     int num = Integer.parseInt(count);
-                                    num +=1;
+                                    num += 1;
                                     count = Integer.toString(num);
 
                                     DocumentReference db = firebaseFirestore.collection("posts").document(writeinfo.getId());
                                     Map<String, Object> Lcount = new HashMap<>();
                                     Lcount.put("likecount", count);
+                                    Lcount.put("userliked", true);
                                     db.set(Lcount, SetOptions.merge());
 
                                 } else {
@@ -189,8 +188,6 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                             }
                         }
                     });
-
-
 
 
                     // TODO : CheckBox is checked.
@@ -208,12 +205,13 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                                     //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                                     String count = document.getData().get("likecount").toString();
                                     int num = Integer.parseInt(count);
-                                    num -=1;
+                                    num -= 1;
                                     count = Integer.toString(num);
 
                                     DocumentReference db = firebaseFirestore.collection("posts").document(writeinfo.getId());
                                     Map<String, Object> Lcount = new HashMap<>();
                                     Lcount.put("likecount", count);
+                                    Lcount.put("userliked", false);
                                     db.set(Lcount, SetOptions.merge());
 
                                 } else {
@@ -275,6 +273,36 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
         userEmail.setText(mDataset.get(position).getEmail());
 
         TextView likecountView = cardView.findViewById(R.id.likecountView);
+
+
+        final FirebaseFirestore dd = FirebaseFirestore.getInstance();
+        DocumentReference docRef = dd.collection("posts").document(mDataset.get(position).getId().toString());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                        String like = document.getData().get("userliked").toString();
+                        String userlike = "true";
+                        if (userlike.equals(like)) {
+                            heart.setChecked(true);
+                        } else {
+                            heart.setChecked(false);
+
+                        }
+
+                    } else {
+                        //Log.d(TAG, "No such document");
+                    }
+                } else {
+                    //Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+
+
         String likecount = String.valueOf(mDataset.get(position).getLikecount());
         likecountView.setText(likecount);
 

@@ -227,6 +227,18 @@ public class shareFragment extends Fragment {
                                 // likesCount += 1 ;
                                // String likecount = Integer.toString(likesCount[0]);
 
+
+
+
+
+
+
+
+
+
+
+
+
                                 final Writeinfo writeinfo = new Writeinfo(
                                         document.getData().get("title").toString(),
                                         (ArrayList<String>)document.getData().get("contents"),
@@ -234,7 +246,8 @@ public class shareFragment extends Fragment {
                                         new Date(document.getDate("createdAt").getTime()),
                                         document.getId(),
                                         document.getData().get("email").toString(),
-                                        document.getData().get("likecount").toString()
+                                        document.getData().get("likecount").toString(),
+                                        document.getData().get("userliked").toString()
                                 );
 
 
