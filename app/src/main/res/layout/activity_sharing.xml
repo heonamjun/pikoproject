@@ -4,17 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/Loginout2"
-        android:layout_width="60dp"
-        android:layout_height="25dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="18dp"
-        android:layout_marginBottom="19dp"
-        android:background="@drawable/sticker_transparent_background"
-        android:text="로그아웃" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -39,30 +28,38 @@
         </android.support.v4.widget.SwipeRefreshLayout>
 
 
-        <ImageView
-            android:id="@+id/imageView3"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="65dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/colorPrimary">
 
-            android:layout_marginBottom="0dp"
-            android:layout_weight="3"
-            android:background="@drawable/sticker_transparent_background"
-            app:srcCompat="@color/colorPrimary" />
+            <Button
+                android:id="@+id/Loginout2"
+                android:layout_width="60dp"
+                android:layout_height="25dp"
+                android:layout_gravity="right|center_vertical"
+                android:background="@drawable/sticker_transparent_background"
+                android:text="로그아웃" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/floatingActionButton"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:clickable="true"
+                    android:src="@drawable/ic_add_black_24dp"
+                    android:tint="@color/colorAccent"
+                    app:backgroundTint="@color/common_google_signin_btn_text_dark_default" />
+            </FrameLayout>
+
+        </FrameLayout>
 
     </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="6dp"
-        android:clickable="true"
-        android:src="@drawable/ic_add_black_24dp"
-        android:tint="@color/colorAccent"
-        app:backgroundTint="@color/common_google_signin_btn_text_dark_default" />
 
     <include
         layout="@layout/view_loader"

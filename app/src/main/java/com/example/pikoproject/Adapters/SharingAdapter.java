@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -42,7 +41,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -296,10 +294,10 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
 
 
         String likecount = String.valueOf(mDataset.get(position).getLikecount());
-        likecountView.setText(likecount);
+        likecountView.setText("좋아요 "+likecount+"개");
 
 /*        chatbtn = cardView.findViewById(R.id.chatsend);
-        chatbtn.setOnClickListener(new View.OnClickListener() {
+       chatbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String chatcontents = ((TextView) cardView.findViewById(R.id.chatcontentText)).getText().toString();
