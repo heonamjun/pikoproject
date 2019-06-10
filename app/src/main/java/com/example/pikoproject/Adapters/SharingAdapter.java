@@ -22,7 +22,6 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.pikoproject.Activity.CameraActivity;
@@ -234,7 +233,6 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                 likeMap.put("createAt", new Date());
                 likeMap.put("id", likeRef.document().getId());
 
-                Toast.makeText(activity, likeRef.document().getPath(),Toast.LENGTH_LONG).show();
                 likeRef.add(likeMap);
 
 
