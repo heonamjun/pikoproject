@@ -225,28 +225,20 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
 
                 }
 
-
-
-
-             /*   final DocumentReference documentReference = writeinfo == null ? firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(writeinfo.getId());
+                final DocumentReference documentReference = writeinfo == null ? firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(writeinfo.getId());
                 CollectionReference likeRef = documentReference.collection("likes");
 
 
                 //좋아요 추가
                 Map<String, Object> likeMap = new HashMap<>();
                 likeMap.put("publicsher", username);
-               // likeMap.put("userliked", true);
+                likeMap.put("userliked", true);
                 likeMap.put("createAt", new Date());
                 likeMap.put("id", likeRef.document().getId());
 
-                likeRef.add(likeMap)
-                        .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentReference> task) {
-                                Toast.makeText(activity, "좋아요", Toast.LENGTH_LONG).show();
-                            }
-                        });
-*/
+                Toast.makeText(activity, likeRef.document().getPath(),Toast.LENGTH_LONG).show();
+                likeRef.add(likeMap);
+
 
 /*                final DocumentReference documentReference = writeinfo == null ?firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(writeinfo.getId()) ;
                 CollectionReference likeRef =  documentReference.collection("likes");*/
@@ -306,7 +298,7 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
         String likecount = String.valueOf(mDataset.get(position).getLikecount());
         likecountView.setText(likecount);
 
-        chatbtn = cardView.findViewById(R.id.chatsend);
+/*        chatbtn = cardView.findViewById(R.id.chatsend);
         chatbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -344,7 +336,7 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                 }
 
             }
-        });
+        });*/
 
         LinearLayout contentsLayout = cardView.findViewById(R.id.contentLayout);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

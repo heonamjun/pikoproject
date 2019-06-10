@@ -22,7 +22,6 @@
             android:label="@string/title_activity_gallery_activiy"
             android:theme="@style/AppTheme"></activity>
         <activity android:name=".Activity.AddsharingActivity" />
-        <activity android:name=".Activity.SharingActivity" />
 
         <activity
             android:name=".Activity.Sign_upActivity"

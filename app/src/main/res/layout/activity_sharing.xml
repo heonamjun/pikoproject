@@ -10,8 +10,8 @@
         android:layout_height="25dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginBottom="47dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginBottom="19dp"
         android:background="@drawable/sticker_transparent_background"
         android:text="로그아웃" />
 
@@ -21,20 +21,31 @@
         android:orientation="vertical"
         android:weightSum="15">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/SharingrecycleView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="13">
 
-        </android.support.v7.widget.RecyclerView>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="12">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/SharingrecycleView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="13">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
 
         <ImageView
             android:id="@+id/imageView3"
             android:layout_width="match_parent"
             android:layout_height="65dp"
+
             android:layout_marginBottom="0dp"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:background="@drawable/sticker_transparent_background"
             app:srcCompat="@color/colorPrimary" />
 
@@ -46,8 +57,8 @@
         android:layout_height="80dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="26dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="6dp"
         android:clickable="true"
         android:src="@drawable/ic_add_black_24dp"
         android:tint="@color/colorAccent"

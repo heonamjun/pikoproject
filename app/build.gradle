@@ -56,6 +56,8 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-storage:16.1.0'
     implementation 'com.flying.xiaopo:sticker:1.6.0'
+    implementation 'com.android.support:design:28.0.0'
+
 
 
 
