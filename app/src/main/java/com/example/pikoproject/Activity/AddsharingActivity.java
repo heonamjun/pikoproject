@@ -242,7 +242,7 @@ public class AddsharingActivity extends AppCompatActivity {
                                                     contentsList.set(index,uri.toString());
 
                                                     if(successCount == 0){
-                                                        Writeinfo writeinfo = new Writeinfo(title, contentsList ,user.getUid(), date , documentReference.getId(), user.getEmail(), "0");
+                                                        Writeinfo writeinfo = new Writeinfo(title, contentsList ,user.getUid(), date , documentReference.getId(), user.getEmail(),"0");
                                                         Uploder(documentReference ,writeinfo);
                                                     }
                                                 }
@@ -257,7 +257,7 @@ public class AddsharingActivity extends AppCompatActivity {
                         }
                 }
                 if(successCount == 0){
-                    Uploder(documentReference ,new Writeinfo(title, contentsList ,user.getUid(), date, user.getEmail(),user.getEmail()));
+                    Uploder(documentReference ,new Writeinfo(title, contentsList ,user.getUid(), date , documentReference.getId(), user.getEmail(),"0"));
                 }
 
 

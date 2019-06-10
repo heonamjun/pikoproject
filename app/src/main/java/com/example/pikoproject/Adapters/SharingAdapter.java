@@ -42,6 +42,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +63,7 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
     private Context mcontext;
     private Button chatbtn;
     public static String userliked;
+
 
 
     static class SharingViewHolder extends RecyclerView.ViewHolder {
@@ -154,25 +156,82 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
             public void onClick(View v) {
                 user = FirebaseAuth.getInstance().getCurrentUser();
                 String path = mDataset.get(position).getId();//사용자 고유 아이디 getId() -> 문서 아이디
-                Writeinfo writeinfo = mDataset.get(position);
+                final Writeinfo writeinfo = mDataset.get(position);
                 String username = user.getUid();
-                final int likenumber = 0;
-               // Toast.makeText(activity, "  " + path, Toast.LENGTH_LONG).show();
-                FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-                final DocumentReference documentReference = writeinfo == null ? firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(writeinfo.getId());
-                CollectionReference likeRef = documentReference.collection("likes");
+                final FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
-                firebaseFirestore.collection("posts").document(path).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task1) {
-                        if (task1.isSuccessful()) {
-                            DocumentSnapshot document = task1.getResult();
-                            //     userliked =  document.getData().get("userliked").toString();
-                        } else {
 
+
+                if (((CheckBox)v).isChecked()) {
+                    DocumentReference docRef = firebaseFirestore.collection("posts").document(mDataset.get(position).getId().toString());
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                    String count = document.getData().get("likecount").toString();
+                                    int num = Integer.parseInt(count);
+                                    num +=1;
+                                    count = Integer.toString(num);
+
+                                    DocumentReference db = firebaseFirestore.collection("posts").document(writeinfo.getId());
+                                    Map<String, Object> Lcount = new HashMap<>();
+                                    Lcount.put("likecount", count);
+                                    db.set(Lcount, SetOptions.merge());
+
+                                } else {
+                                    //Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                //Log.d(TAG, "get failed with ", task.getException());
+                            }
                         }
-                    }
-                });
+                    });
+
+
+
+
+                    // TODO : CheckBox is checked.
+                } else {
+                    // TODO : CheckBox is unchecked.
+
+
+                    DocumentReference docRef = firebaseFirestore.collection("posts").document(mDataset.get(position).getId().toString());
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document.exists()) {
+                                    //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                                    String count = document.getData().get("likecount").toString();
+                                    int num = Integer.parseInt(count);
+                                    num -=1;
+                                    count = Integer.toString(num);
+
+                                    DocumentReference db = firebaseFirestore.collection("posts").document(writeinfo.getId());
+                                    Map<String, Object> Lcount = new HashMap<>();
+                                    Lcount.put("likecount", count);
+                                    db.set(Lcount, SetOptions.merge());
+
+                                } else {
+                                    //Log.d(TAG, "No such document");
+                                }
+                            } else {
+                                //Log.d(TAG, "get failed with ", task.getException());
+                            }
+                        }
+                    });
+
+                }
+
+
+
+
+             /*   final DocumentReference documentReference = writeinfo == null ? firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(writeinfo.getId());
+                CollectionReference likeRef = documentReference.collection("likes");
 
 
                 //좋아요 추가
@@ -189,7 +248,7 @@ public class SharingAdapter extends RecyclerView.Adapter<SharingAdapter.SharingV
                                 Toast.makeText(activity, "좋아요", Toast.LENGTH_LONG).show();
                             }
                         });
-
+*/
 
 /*                final DocumentReference documentReference = writeinfo == null ?firebaseFirestore.collection("posts").document() : firebaseFirestore.collection("posts").document(writeinfo.getId()) ;
                 CollectionReference likeRef =  documentReference.collection("likes");*/

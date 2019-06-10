@@ -62,7 +62,7 @@ public class shareFragment extends Fragment {
     private Context mContext ;
     protected String uesrid;
     protected String uesremail;
-    static int likesCount;
+
 
 
     @Override
@@ -79,6 +79,7 @@ public class shareFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_sharing,container,false);
         view.findViewById(R.id.floatingActionButton).setOnClickListener(onClickListener);
         RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.SharingrecycleView);
+
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(firebaseUser == null){
             Intent intent = new Intent(getActivity() , LoginActivity.class);
@@ -219,28 +220,12 @@ public class shareFragment extends Fragment {
                                         new Date(document.getDate("createdAt").getTime()),
                                         document.getId()));*/
 
-                                DocumentReference postRef = document.getReference();
-                                final CollectionReference likeRef = postRef.collection("likes");
-                                likeRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<QuerySnapshot> task1) {
-                                        if(task1.isSuccessful()){
-                                            //likes 콜렉션을 받아오는데 성공
-                                            QuerySnapshot likesresult = task1.getResult();
-                                            likesCount = likesresult.size();
-                                        }
-                                    }
-                                });
-
-
-                                Map<String, Object> data = new HashMap<>();// 보내기
+/*                                Map<String, Object> data = new HashMap<>();// 보내기
                                 data.put("likecount",likesCount);
-                                firebaseFirestore.collection("posts").document(document.getId()).set(data, SetOptions.merge());
-
-
+                                firebaseFirestore.collection("posts").document(document.getId()).set(data, SetOptions.merge());*/
 
                                 // likesCount += 1 ;
-                                String likecount = Integer.toString(likesCount);
+                               // String likecount = Integer.toString(likesCount[0]);
 
                                 final Writeinfo writeinfo = new Writeinfo(
                                         document.getData().get("title").toString(),
@@ -249,9 +234,28 @@ public class shareFragment extends Fragment {
                                         new Date(document.getDate("createdAt").getTime()),
                                         document.getId(),
                                         document.getData().get("email").toString(),
-                                        likecount
+                                        document.getData().get("likecount").toString()
                                 );
 
+
+                     /*           DocumentReference postRef = document.getReference();
+                                CollectionReference likeRef = postRef.collection("likes");
+
+                                likeRef.get()
+                                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                                                if(task1.isSuccessful()){
+                                                    //likes 콜렉션을 받아오는데 성공
+                                                    QuerySnapshot likesresult = task1.getResult();
+                                                    int likesCount = likesresult.size();
+                                                    Map<String, Object> data = new HashMap<>();
+                                                    data.put("publicsher", likesCount);
+                                                    firebaseFirestore.collection("posts").document(document.getData().get("id").toString()).set(data, SetOptions.merge());
+
+                                                }
+                                            }
+                                        });*/
 
 
                                 postList.add(writeinfo);
